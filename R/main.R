@@ -760,7 +760,8 @@ update.RoBMA <- function(object, refit_failed = TRUE,
   return(fit)
 }
 .fit_model_RoBMA       <- function(model_syntax, fit_data, fit_inits, monitor_variables, control, seed){
-  attachNamespace("RoBMA")
+  # requires namespace in case that the fit is estimated in a separate R process (for the silent mode)
+  requireNamespace("RoBMA")
   if(!is.null(seed))set.seed(seed)
   tryCatch(runjags::autorun.jags(
     model           = model_syntax,

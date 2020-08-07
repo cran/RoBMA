@@ -1,3 +1,7 @@
+# version 1.0.4
+Fixes:
+- inability to run models without the silent = TRUE control
+
 # version 1.0.3
 Features:
 - x-axis rescaling for the weight function plot (by setting 'rescale_x = TRUE' in the 'plot.RoBMA' function)
