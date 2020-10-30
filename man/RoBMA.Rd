@@ -33,6 +33,7 @@ RoBMA(
   iter = 10000,
   burnin = 5000,
   thin = 1,
+  parallel = FALSE,
   control = NULL,
   save = "all",
   seed = NULL
@@ -120,6 +121,10 @@ Defaults to \code{5000}.}
 \item{thin}{a thinning of the chains of the MCMC algorithm. Defaults to
 \code{1}.}
 
+\item{parallel}{whether the individual models should be fitted in parallel.
+Defaults to \code{FALSE}. The \code{cores} argument within the \code{control}
+list will overwrite the setting if specified to a number higher than 1.}
+
 \item{control}{a list of additional arguments for the MCMC algorithm.
 Possible options are:
 \describe{
@@ -167,6 +172,9 @@ C++ library should be used as the first option. The higher precision of
 boost allows to estimate models in difficult cases. Defaults to \code{FALSE}.
 The R distributions are used as default and boost is used only if they fail.
 Warning: the estimation using boost takes about twice as long.}
+\item{cores}{Number of cores to bu used fo parallel computation. If
+\code{parallel == TRUE}, the default number is equal to number of cores - 1,
+and 1 (no parallel processing otherwise).}
 }}
 
 \item{save}{whether all models posterior distributions should be kept
