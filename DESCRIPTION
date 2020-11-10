@@ -1,6 +1,6 @@
 Package: RoBMA
 Title: Robust Bayesian Meta-Analyses
-Version: 1.1.0
+Version: 1.1.1
 Maintainer: František Bartoš <f.bartos96@gmail.com>
 Authors@R: c( 
     person("František", "Bartoš",     role = c("aut", "cre"),
@@ -35,10 +35,10 @@ RdMacros: Rdpack
 LinkingTo: BH
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2020-10-29 22:59:44 UTC; fbart
+Packaged: 2020-11-09 23:04:24 UTC; fbart
 Author: František Bartoš [aut, cre] (<https://orcid.org/0000-0002-0018-5573>),
   Maximilian Maier [aut] (<https://orcid.org/0000-0002-9873-6096>),
   Eric-Jan Wagenmakers [ths] (<https://orcid.org/0000-0003-1596-1034>),
   Joris Goosen [ctb]
 Repository: CRAN
-Date/Publication: 2020-10-30 05:20:07 UTC
+Date/Publication: 2020-11-10 10:40:03 UTC
