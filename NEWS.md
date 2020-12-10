@@ -1,3 +1,7 @@
+## version 1.1.2
+### Fixes
+- vdiffr not being used conditionally in unit tests
+
 ## version 1.1.1
 ### Fixes
 - inability to fit a model without specifying a seed
