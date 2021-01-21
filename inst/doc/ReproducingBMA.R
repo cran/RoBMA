@@ -36,12 +36,9 @@ plot(fit_RoBMA_est, parameter = "mu", prior = TRUE)
 ## ----fig.height = 3.25, fig.width = 4, fig.align = "center"-------------------
 plot(fit_RoBMA_est, parameter = "mu", prior = TRUE, type = "conditional", plot_type = "ggplot")
 
-## ----fig.height = 5, fig.width = 6.5, fig.align = "center"--------------------
+## ----fig.height = 5, fig.width = 7.5, fig.align = "center"--------------------
 plot(fit_RoBMA_est, parameter = "mu", type = "models")
 
 ## ----fig.height = 4.5, fig.width = 5, fig.align = "center"--------------------
 plot(fit_RoBMA_est, parameter = "forest")
-
-## ----fig.height = 6, fig.width = 5, fig.align = "center"----------------------
-plot(fit_RoBMA_est, parameter = c("forest","theta"))
 

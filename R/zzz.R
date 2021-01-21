@@ -9,3 +9,10 @@
   tryCatch(rjags::load.module("RoBMA", path = path), error = function(e) warning(sprintf("The RoBMA module couldn't be loaded from %s. libname: %s, pkgname: %s.\n", path, libname, pkgname)))
 
 }
+
+.onAttach <- function(libname, pkgname){
+
+  packageStartupMessage(
+    "Please, note the following changes in version 1.2.0 (see NEWS for more details):\n- all models are now estimated using the likelihood of effects sizes (instead of t-statistics)\n- parametrization of random effect models changed (the studies' true effects are marginalized out of the likelihood)")
+
+}

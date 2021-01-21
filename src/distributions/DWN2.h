@@ -1,14 +1,14 @@
-#ifndef DWT1boost_H_
-#define DWT1boost_H_
+#ifndef DWN2_H_
+#define DWN2_H_
 #include <distribution/VectorDist.h>
 
 namespace jags {
 namespace weightedt { // module namespace
 
-class DWT1boost : public VectorDist
+class DWN2 : public VectorDist
   {
   public:
-    DWT1boost();
+    DWN2();
     
   double logDensity(double const *x, unsigned int length, PDFType tpye, 
 		    std::vector<double const *> const &parameters,
@@ -34,6 +34,6 @@ class DWT1boost : public VectorDist
 
 }
 }
-#endif /* DWT1boost_H_ */
+#endif /* DWN2_H_ */
 
 
