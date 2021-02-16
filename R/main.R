@@ -956,9 +956,9 @@ update.RoBMA <- function(object, refit_failed = TRUE,
   eff <- ifelse(effect_direction == "negative", "mu_neg", "mu")
   # add PET/PEESE
   if(grepl("PET", priors$omega$distribution)){
-    eff <- paste0("(", eff, " + PET * se[i])")
+    eff <- paste0("(", eff, " + PET * std_se[i])")
   }else if(grepl("PEESE", priors$omega$distribution)){
-    eff <- paste0("(", eff, " + PEESE * pow(se[i], 2))")
+    eff <- paste0("(", eff, " + PEESE * std_se2[i])")
   }
 
 
@@ -1001,6 +1001,13 @@ update.RoBMA <- function(object, refit_failed = TRUE,
     if(effect_direction == "negative"){
       data$y <- - data$y
     }
+  }
+
+  # add standardized standard errors for g-prior parametrization on PET/PEESE
+  if(grepl("PET", priors$omega$distribution)){
+    data$std_se  <- stats::sd(data$y) * (data$se/stats::sd(data$se))
+  }else if(grepl("PEESE", priors$omega$distribution)){
+    data$std_se2 <- stats::sd(data$y) * (data$se^2/stats::sd(data$se^2))
   }
 
 
@@ -1352,9 +1359,9 @@ update.RoBMA <- function(object, refit_failed = TRUE,
   # add PET/PEESE
   eff <- ifelse(effect_direction == "negative", -1, 1)*mu
   if(grepl("PET", priors$omega$distribution)){
-    eff <- eff + PET * data$se
+    eff <- eff + PET   * data$std_se
   }else if(grepl("PEESE", priors$omega$distribution)){
-    eff <- eff + PEESE * data$se^2
+    eff <- eff + PEESE * data$std_se2
   }
 
 

@@ -1314,8 +1314,9 @@ check_setup <- function(priors_mu    = prior(distribution = "normal",   paramete
                         priors_omega_null = prior(distribution = "point", parameters = list(location = 1)),
                         models = FALSE, silent = FALSE){
 
-  prior_sigma <- if(likelihood == "wls") prior(distribution = "invgamma", parameters = list(shape = 1, scale = 1))
   likelihood  <- "t"
+  prior_sigma <- if(likelihood == "wls") prior(distribution = "invgamma", parameters = list(shape = 1, scale = 1))
+
 
   object <- list()
   object$priors  <- .set_priors(priors_mu_null, priors_mu, priors_tau_null, priors_tau, priors_omega_null, priors_omega, prior_sigma, likelihood)

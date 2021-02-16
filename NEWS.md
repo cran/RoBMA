@@ -1,3 +1,7 @@
+## version 1.2.1
+### Fixes
+- check_setup function not working at all
+
 ## version 1.2.0
 ### Changes
 - the studies's true effects are now marginalized out of the random effects models and are no longer estimated (see Appendix A of our [prerint](https://psyarxiv.com/u4cns/) for more details). As a results, arguments referring to the true effects are now disabled.
