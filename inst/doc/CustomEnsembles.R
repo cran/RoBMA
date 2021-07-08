@@ -1,46 +1,46 @@
 ## ----setup, include = FALSE---------------------------------------------------
-is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",
-             "_R_CHECK_LICENSE_") %in% names(Sys.getenv())) || !file.exists("../prefitted/Bem_update1.RDS") 
+is_check <- ("CheckExEnv" %in% search()) ||
+             any(c("_R_CHECK_TIMINGS_", "_R_CHECK_LICENSE_") %in% names(Sys.getenv())) ||
+             !file.exists("../models/CustomEnsembles/Bem_update1.RDS") 
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  eval = !is_check
+  comment  = "#>",
+  eval     = !is_check,
+  dev      = "png"
 )
-
-## -----------------------------------------------------------------------------
-Bem2011 <- data.frame(
-  study = c( "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9"),
-  t     = c(2.51, 2.39, 2.55, 2.03, 2.23, 2.41, 1.31, 1.92, 2.96),
-  N     = c( 100,  150,   97,   99,  100,  150,  200,  100,   50)
-)
+if(.Platform$OS.type == "windows"){
+  knitr::opts_chunk$set(dev.args = list(type = "cairo"))
+}
 
 ## -----------------------------------------------------------------------------
 library(RoBMA)
 
-fit <- RoBMA(t = Bem2011$t, n = Bem2011$N, study_names = Bem2011$study,
-             priors_mu = NULL, priors_tau = NULL, priors_omega = NULL,
-             priors_mu_null    = prior("spike", parameters = list(location = 0)),
-             priors_tau_null   = prior("spike", parameters = list(location = 0)),
-             priors_omega_null = prior("spike", parameters = list(location = 1)),
-             control = list(silent = TRUE), seed = 666)
+data("Bem2011", package = "RoBMA")
+Bem2011
 
-## ----fig.height = 3.25, fig.width = 4, fig.align = "center"-------------------
-plot(prior("normal", parameters = list(mean = .15, sd = .10)))
-
-## ----include = FALSE----------------------------------------------------------
-# these fits are relatively fast, but we reduce the knitting time considerably
-fit <- readRDS(file = "../prefitted/Bem_update1.RDS")
+## -----------------------------------------------------------------------------
+fit <- RoBMA(d = Bem2011$d, se = Bem2011$se, study_names = Bem2011$study,
+             priors_effect = NULL, priors_heterogeneity = NULL, priors_bias = NULL,
+             priors_effect_null        = prior("spike", parameters = list(location = 0)),
+             priors_heterogeneity_null = prior("spike", parameters = list(location = 0)),
+             priors_bias_null          = prior_none(),
+             seed = 1)
 
 ## -----------------------------------------------------------------------------
 summary(fit, type = "models")
 
-summary(fit, type = "individual")
-
-## ----fig.height = 3.25, fig.width = 4, fig.align = "center"-------------------
-plot(prior("one.sided", parameters = list(steps = c(0.05, .10), alpha = c(1,1,1))))
+## ----fig_mu_prior, dpi = 300, fig.width = 4, fig.height = 3, out.width = "50%", fig.align = "center"----
+plot(prior("normal", parameters = list(mean = .15, sd = .10), truncation = list(lower = 0)))
 
 ## ----include = FALSE----------------------------------------------------------
-fit <- readRDS(file = "../prefitted/Bem_update2.RDS")
+# these fits are relatively fast, but we reduce the knitting time considerably
+fit <- readRDS(file = "../models/CustomEnsembles/Bem_update1.RDS")
+
+## -----------------------------------------------------------------------------
+summary(fit, type = "models")
+
+## ----include = FALSE----------------------------------------------------------
+fit <- readRDS(file = "../models/CustomEnsembles/Bem_update2.RDS")
 
 ## -----------------------------------------------------------------------------
 summary(fit, type = "models")
@@ -48,9 +48,12 @@ summary(fit, type = "models")
 ## -----------------------------------------------------------------------------
 summary(fit)
 
-## ----fig.height = 3.25, fig.width = 4, fig.align = "center"-------------------
+## ----fig_mu_posterior, dpi = 300, fig.width = 4, fig.height = 3.5, out.width = "50%", fig.align = "center"----
 plot(fit, parameter = "mu", prior = TRUE)
 
-## ----fig.height = 3.25, fig.width = 4, fig.align = "center"-------------------
-plot(fit, parameter = "omega", prior = TRUE)
+## ----fig_weightfunction_posterior, dpi = 300, fig.width = 5, fig.height = 4, out.width = "75%", fig.align = "center"----
+plot(fit, parameter = "weightfunction", prior = TRUE)
+
+## ----fig_PETPEESE_posterior, dpi = 300, fig.width = 5, fig.height = 4, out.width = "75%", fig.align = "center"----
+plot(fit, parameter = "PET-PEESE", prior = TRUE)
 
