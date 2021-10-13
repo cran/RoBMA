@@ -358,3 +358,59 @@ is.RoBMA            <- function(x){
   inherits(x, "RoBMA")
 }
 
+
+
+#' @title Interprets results of a RoBMA model.
+#'
+#' @description \code{interpret} creates a brief textual summary
+#' of a fitted RoBMA object.
+#'
+#' @inheritParams summary.RoBMA
+#'
+#'
+#' @return \code{interpret} returns a character.
+#'
+#' @export
+interpret           <- function(object, output_scale = NULL){
+
+  if(is.null(output_scale)){
+    output_scale <- object$add_info[["output_scale"]]
+  }else if(object$add_info[["output_scale"]] == "y" & .transformation_var(output_scale) != "y"){
+    stop("Models estimated using the generall effect size scale 'y' / 'none' cannot be transformed to a different effect size scale.")
+  }else{
+    output_scale <- .transformation_var(output_scale)
+  }
+
+  if(object$add_info[["output_scale"]] != output_scale){
+    object <- .transform_posterior(object, object$add_info[["output_scale"]], output_scale)
+  }
+
+  text <- BayesTools::interpret(
+    inference     = object$RoBMA[["inference"]],
+    samples       = object$RoBMA[["posteriors"]],
+    specification = list(
+      list(
+        inference           = "Effect",
+        samples             = "mu",
+        inference_name      = "effect",
+        inference_BF_name   = "BF_10",
+        samples_name        = .transformation_names(object$add_info[["output_scale"]])
+      )[any(names(object$RoBMA[["inference"]]) == "Effect")],
+      list(
+        inference           = "Heterogeneity",
+        samples             = "tau",
+        inference_name      = "heterogeneity",
+        inference_BF_name   = "BF^rf",
+        samples_name        = "tau"
+      )[any(names(object$RoBMA[["inference"]]) == "Heterogeneity")],
+      list(
+        inference           = "Bias",
+        inference_name      = "publication bias",
+        inference_BF_name   = "BF_pb"
+      )[any(names(object$RoBMA[["inference"]]) == "Bias")]
+    ),
+    method        = "Robust Bayesian meta-analysis"
+  )
+
+  return(text)
+}

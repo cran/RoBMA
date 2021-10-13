@@ -1,3 +1,16 @@
+## to be version 2.1
+### Fixes
+- more informative error message when the JAGS module fails to load
+- correcting wrong PEESE transformation for the individual models summaries (issue #12)
+- fixing error message for missing conditional PET-PEESE
+- fixing incorrect lower bound check for log(OR)
+
+### Features
+- adding `interpret()` function (issue #11)
+- adding effect size transformation via `output_scale` argument to `plot()` and `plot_models()` functions
+- better handling of effect size transformations and scaling - BayesTools style back-end functions with Jacobian transformations
+
+
 ## version 2.0
 Please notice that this is a major release that breaks backwards compatibility.
 

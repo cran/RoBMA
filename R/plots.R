@@ -20,6 +20,9 @@
 #' \code{"base"}.
 #' @param prior whether prior distribution should be added to
 #' figure. Defaults to \code{FALSE}.
+#' @param output_scale transform the effect sizes and the meta-analytic
+#' effect size estimate to a different scale. Defaults to \code{NULL}
+#' which returns the same scale as the model was estimated on.
 #' @param rescale_x whether the x-axis of the \code{"weightfunction"}
 #' should be re-scaled to make the x-ticks equally spaced.
 #' Defaults to \code{FALSE}.
@@ -73,15 +76,12 @@
 #' @seealso [RoBMA()]
 #' @export
 plot.RoBMA  <- function(x, parameter = "mu",
-                        conditional = FALSE, plot_type = "base", prior = FALSE,
+                        conditional = FALSE, plot_type = "base", prior = FALSE, output_scale = NULL,
                         rescale_x = FALSE, show_data = TRUE, dots_prior = NULL, ...){
 
   # check whether plotting is possible
   if(sum(.get_model_convergence(x)) == 0)
     stop("There is no converged model in the ensemble.")
-
-  # TODO: implement
-  output_scale <- NULL
 
   #check settings
   BayesTools::check_char(parameter, "parameter")
@@ -104,35 +104,27 @@ plot.RoBMA  <- function(x, parameter = "mu",
 
   ### manage transformations
   # get the settings
-  prior_scale <- x$add_info[["prior_scale"]]
+  results_scale <- x$add_info[["output_scale"]]
   if(is.null(output_scale)){
     output_scale <- x$add_info[["output_scale"]]
   }else{
     output_scale <- .transformation_var(output_scale)
   }
   # set the transformations
-  if(prior_scale != output_scale){
-    # TODO: figure out transformations, including jacobinas for effect sizes transformations - needed for the priors
-    stop("Plotting output on a different than prior scale is not possible yet.")
-    # if(parameter == "PETPEESE"){
-    #
-    #   # the transformation is inverse for PEESE
-    #   transformation           = "lin"
-    #   transformation_arguments = list(a = 0, b = .get_scale_b(output_scale, priors_scale))
-    #
-    # }else if(parameter == "mu"){
-    #
-    #   # this transformation needs jacobian!
-    #
-    # }else if(parameter == "tau"){
-    #
-    #   transformation           = "lin"
-    #   transformation_arguments = list(a = 0, b = .get_scale_b(priors_scale, output_scale))
-    #
-    # }
+  if(parameter != "omega" && results_scale != output_scale){
+    if(parameter == "PETPEESE"){
+      # the transformation is inverse for PEESE
+      transformation <- eval(parse(text = paste0(".scale_", output_scale, "2", results_scale)))
+    }else if(parameter == "PET"){
+      # PET is scale invariant
+      transformation <- NULL
+    }else if(parameter == "mu"){
+      transformation <- eval(parse(text = paste0(".", results_scale, "2", output_scale)))
+    }else if(parameter == "tau"){
+      transformation <- eval(parse(text = paste0(".scale_", results_scale, "2", output_scale)))
+    }
   }else{
-    transformation           <- NULL
-    transformation_arguments <- NULL
+    transformation <- NULL
   }
 
 
@@ -163,6 +155,8 @@ plot.RoBMA  <- function(x, parameter = "mu",
         stop("The ensemble does not contain any posterior samples model-averaged across the models assuming the presence of PET-PEESE publication bias adjustment. Please, verify that you specified at least one model assuming the presence of PET-PEESE publication bias adjustment.")
       parameters      <- c("mu", "PEESE")
       parameters_null <- c("mu" = list(!is_conditional), "PEESE" = list(!is_conditional))
+    }else{
+      stop("The ensemble does not contain any posterior samples model-averaged across the models assuming the presence of PET-PEESE publication bias adjustment. Please, verify that you specified at least one model assuming the presence of PET-PEESE publication bias adjustment.")
     }
 
     samples <- BayesTools::mix_posteriors(
@@ -199,9 +193,9 @@ plot.RoBMA  <- function(x, parameter = "mu",
     }
   }else if(parameter %in% "PETPEESE"){
     # checking for mu since it's the common parameter for PET-PEESE
-    if(conditional && is.null(samples[["PET"]]) && is.null(samples[["PEESE"]])){
+    if(conditional && (is.null(samples[["mu"]]) || is.null(samples[["PET"]]) && is.null(samples[["PEESE"]]))){
       stop("The ensemble does not contain any posterior samples model-averaged across the models assuming the presence of PET-PEESE publication bias adjustment. Please, verify that you specified at least one model assuming the presence of PET-PEESE publication bias adjustment.")
-    }else if(is.null(samples[["PET"]]) && is.null(samples[["PEESE"]])){
+    }else if(is.null(samples[["mu"]]) || is.null(samples[["PET"]]) && is.null(samples[["PEESE"]])){
       stop("The ensemble does not contain any posterior samples model-averaged across the PET-PEESE publication bias adjustment. Please, verify that you specified at least one PET-PEESE publication bias adjustment.")
     }
   }
@@ -211,30 +205,30 @@ plot.RoBMA  <- function(x, parameter = "mu",
   dots_prior <- .set_dots_prior(dots_prior)
 
   if(parameter == "PETPEESE" & show_data){
-    # TODO: change from 'prior_scale' to 'output_scale' when plotting scale can be changed
     data <- x[["data"]]
-    data <- combine_data(data = data, transformation = .transformation_invar(prior_scale))
-    # make sure all standard errors are within the plotting range
+    data <- combine_data(data = data, transformation = .transformation_invar(output_scale))
     if(is.null(dots[["xlim"]])){
       dots[["xlim"]] <- range(pretty(c(0, data$se)))
     }
   }
 
-  plot <- do.call(BayesTools::plot_posterior, c(
-    samples                  = list(samples),
-    parameter                = parameter,
-    plot_type                = plot_type,
-    prior                    = prior,
-    n_points                 = 1000,
-    n_samples                = 10000,
-    force_samples            = FALSE,
-    transformation           = transformation,
-    transformation_arguments = transformation_arguments,
-    transformation_settings  = FALSE,
-    rescale_x                = rescale_x,
-    par_name                 = NULL,
-    dots_prior               = list(dots_prior),
-    dots))
+  # prepare the argument call
+  args                          <- dots
+  args$samples                  <- samples
+  args$parameter                <- parameter
+  args$plot_type                <- plot_type
+  args$prior                    <- prior
+  args$n_points                 <- 1000
+  args$n_samples                <- 10000
+  args$force_samples            <- FALSE
+  args$transformation           <- transformation
+  args$transformation_arguments <- NULL
+  args$transformation_settings  <- FALSE
+  args$rescale_x                <- rescale_x
+  args$par_name                 <- if(parameter %in% c("mu", "tau")) .plot.RoBMA_par_names(parameter, x, output_scale)[[1]]
+  args$dots_prior               <- dots_prior
+
+  plot <- do.call(BayesTools::plot_posterior, args)
 
 
   if(parameter == "PETPEESE" & show_data){
@@ -273,11 +267,8 @@ plot.RoBMA  <- function(x, parameter = "mu",
 #'
 #' @param order order of the studies. Defaults to \code{NULL} -
 #' ordering as supplied to the fitting function. Studies
-#' can be ordered either \code{"ascending"} or \code{"descending"} by
+#' can be ordered either \code{"increasing"} or \code{"decreasing"} by
 #' effect size, or by labels \code{"alphabetical"}.
-#' @param output_scale transform the effect sizes and the meta-analytic
-#' effect size estimate to a different scale. Defaults to \code{NULL}
-#' which returns the same scale as the model was estimated on.
 #' @inheritParams plot.RoBMA
 #'
 #' @examples \dontrun{
@@ -327,7 +318,7 @@ forest <- function(x, conditional = FALSE, plot_type = "base", output_scale = NU
 
   ### manage transformations
   # get the settings
-  prior_scale <- x$add_info[["prior_scale"]]
+  results_scale <- x$add_info[["output_scale"]]
   if(is.null(output_scale)){
     output_scale <- x$add_info[["output_scale"]]
   }else{
@@ -335,8 +326,8 @@ forest <- function(x, conditional = FALSE, plot_type = "base", output_scale = NU
   }
 
   # set the transformations
-  if(prior_scale != output_scale){
-    samples_mu <- .transform_mu(samples_mu, prior_scale, output_scale)
+  if(results_scale != output_scale){
+    samples_mu <- .transform_mu(samples_mu, results_scale, output_scale)
   }
 
   # obtain the posterior estimates
@@ -486,7 +477,7 @@ forest <- function(x, conditional = FALSE, plot_type = "base", output_scale = NU
 #' @param order how the models should be ordered.
 #' Defaults to \code{"decreasing"} which orders them in decreasing
 #' order in accordance to \code{order_by} argument. The alternative is
-#' \code{"decreasing"}.
+#' \code{"increasing"}.
 #' @param order_by what feature should be use to order the models.
 #' Defaults to \code{"model"} which orders the models according to
 #' their number. The alternatives are \code{"estimate"} (for the effect
@@ -514,13 +505,10 @@ forest <- function(x, conditional = FALSE, plot_type = "base", output_scale = NU
 #' or an object object of class 'ggplot2' if \code{plot_type = "ggplot2"}.
 #'
 #' @export
-plot_models <- function(x, parameter = "mu", conditional = FALSE, plot_type = "base", order = "decreasing", order_by = "model", ...){
+plot_models <- function(x, parameter = "mu", conditional = FALSE, output_scale = NULL, plot_type = "base", order = "decreasing", order_by = "model", ...){
 
   if(sum(.get_model_convergence(x)) == 0)
     stop("There is no converged model in the ensemble.")
-
-  # TODO:implement
-  output_scale <- NULL
 
   #check settings
   BayesTools::check_bool(conditional, "conditional")
@@ -536,35 +524,27 @@ plot_models <- function(x, parameter = "mu", conditional = FALSE, plot_type = "b
 
   ### manage transformations
   # get the settings
-  prior_scale <- x$add_info[["prior_scale"]]
+  results_scale <- x$add_info[["output_scale"]]
   if(is.null(output_scale)){
     output_scale <- x$add_info[["output_scale"]]
   }else{
     output_scale <- .transformation_var(output_scale)
   }
   # set the transformations
-  if(prior_scale != output_scale){
-    # TODO: figure out transformations, including jacobinas for effect sizes transformations - needed for the priors
-    stop("Plotting output on a different than prior scale is not possible yet.")
-    # if(parameter == "PEESE"){
-    #
-    #   # the transformation is inverse for PEESE
-    #   transformation           = "lin"
-    #   transformation_arguments = list(a = 0, b = .get_scale_b(output_scale, priors_scale))
-    #
-    # }else if(parameter == "mu"){
-    #
-    #   # this transformation needs jacobian!
-    #
-    # }else if(parameter == "tau"){
-    #
-    #   transformation           = "lin"
-    #   transformation_arguments = list(a = 0, b = .get_scale_b(priors_scale, output_scale))
-    #
-    # }
+  if(results_scale != output_scale){
+    if(parameter == "PETPEESE"){
+      # the transformation is inverse for PEESE
+      transformation <- eval(parse(text = paste0(".scale_", output_scale, "2", results_scale)))
+    }else if(parameter == "PET"){
+      # PET is scale invariant
+      transformation <- NULL
+    }else if(parameter == "mu"){
+      transformation <- eval(parse(text = paste0(".", results_scale, "2", output_scale)))
+    }else if(parameter == "tau"){
+      transformation <- eval(parse(text = paste0(".scale_", results_scale, "2", output_scale)))
+    }
   }else{
-    transformation           <- NULL
-    transformation_arguments <- NULL
+    transformation <- NULL
   }
 
 
@@ -595,20 +575,22 @@ plot_models <- function(x, parameter = "mu", conditional = FALSE, plot_type = "b
 
   dots <- list(...)
 
-  plot <- do.call(BayesTools::plot_models, c(
-    model_list               = list(model_list),
-    samples                  = list(samples),
-    inference                = list(inference),
-    parameter                = parameter,
-    plot_type                = plot_type,
-    prior                    = FALSE,
-    condtional               = conditional,
-    order                    = list(list(order, order_by)),
-    transformation           = transformation,
-    transformation_arguments = transformation_arguments,
-    transformation_settings  = FALSE,
-    par_name                 = .plot.RoBMA_par_names(parameter, x, output_scale)[[1]],
-    dots))
+  # prepare the argument call
+  args                          <- dots
+  args$model_list               <- model_list
+  args$samples                  <- samples
+  args$inference                <- inference
+  args$parameter                <- parameter
+  args$plot_type                <- plot_type
+  args$prior                    <- FALSE
+  args$conditional              <- conditional
+  args$order                    <- list(order, order_by)
+  args$transformation           <- transformation
+  args$transformation_arguments <- NULL
+  args$transformation_settings  <- FALSE
+  args$par_name                 <- .plot.RoBMA_par_names(parameter, x, output_scale)[[1]]
+
+  plot <- do.call(BayesTools::plot_models, args)
 
 
   # return the plots
@@ -640,10 +622,10 @@ plot_models <- function(x, parameter = "mu", conditional = FALSE, plot_type = "b
   }
 
   if(is.null(dots_prior[["col"]])){
-    dots_prior[["col"]]      <- "grey30"
+    dots_prior[["col"]]      <- "grey60"
   }
   if(is.null(dots_prior[["lty"]])){
-    dots_prior[["lty"]]      <- 2
+    dots_prior[["lty"]]      <- 1
   }
   if(is.null(dots_prior[["col.fill"]])){
     dots_prior[["col.fill"]] <- "#B3B3B34C" # scales::alpha("grey70", .30)
@@ -651,29 +633,30 @@ plot_models <- function(x, parameter = "mu", conditional = FALSE, plot_type = "b
 
   return(dots_prior)
 }
-.plot.RoBMA_par_names <- function(par, fit, output_scale, type = NULL){
-
-  add_type  <- if(!is.null(type)) paste0("(",type,")") else NULL
+.plot.RoBMA_par_names <- function(par, fit, output_scale){
 
   if(par == "mu"){
 
     par_names <- list(switch(
       output_scale,
-      "r"     = bquote(~rho~.(add_type)),
-      "d"     = bquote("Cohen's"~italic(d)~.(add_type)),
-      "z"     = bquote("Fisher's"~italic(z)~.(add_type)),
-      "logOR" = bquote("log"(italic("OR"))~.(add_type)),
-      "OR"    = bquote(~italic("OR")~.(add_type)),
-      "y"     = bquote(~mu~.(add_type))
+      "r"     = expression(rho),
+      "d"     = expression("Cohen's"~italic(d)),
+      "z"     = expression("Fisher's"~italic(z)),
+      "logOR" = expression("log"(italic("OR"))),
+      "OR"    = expression(italic("OR")),
+      "y"     = expression(mu)
     ))
 
   }else if(par == "tau"){
 
     par_names <- list(switch(
       output_scale,
-      "r"     = bquote(~tau~("Fisher's"~italic(z)~"scale;"~.(type))),
-      "OR"    = bquote(~tau~("log"(italic("OR"))~"scale;"~.(type))),
-      bquote(~tau~.(add_type))
+      "r"     = expression(tau~(rho)),
+      "d"     = expression(tau~("Cohen's"~italic(d))),
+      "z"     = expression(tau~("Fisher's"~italic(z))),
+      "logOR" = expression(tau~("log"(italic("OR")))),
+      "OR"    = expression(tau~(italic("OR"))),
+      "y"     = expression(tau)
     ))
 
   }else if(par == "omega"){
@@ -695,22 +678,40 @@ plot_models <- function(x, parameter = "mu", conditional = FALSE, plot_type = "b
     # for(i in 1:length(par_names)){
     #   par_names[i] <- list(switch(
     #     output_scale,
-    #     "r"     = bquote(~rho[.(paste0("[",study_names[i],"]"))]~.(add_type)),
-    #     "d"     = bquote("Cohen's"~italic(d)[.(paste0("[",study_names[i],"]"))]~.(add_type)),
-    #     "z"     = bquote("Fisher's"~italic(z)[.(paste0("[",study_names[i],"]"))]~.(add_type)),
-    #     "logOR" = bquote("log"(italic("OR"))[.(paste0("[",study_names[i],"]"))]~.(add_type)),
-    #     "OR"    = bquote(~italic("OR")[.(paste0("[",study_names[i],"]"))]~.(add_type)),
-    #     "y"     = bquote(~mu[.(paste0("[",study_names[i],"]"))]~.(add_type))
+    #     "r"     = bquote(~rho[.(paste0("[",study_names[i],"]"))]),
+    #     "d"     = bquote("Cohen's"~italic(d)[.(paste0("[",study_names[i],"]"))]),
+    #     "z"     = bquote("Fisher's"~italic(z)[.(paste0("[",study_names[i],"]"))]),
+    #     "logOR" = bquote("log"(italic("OR"))[.(paste0("[",study_names[i],"]"))]),
+    #     "OR"    = bquote(~italic("OR")[.(paste0("[",study_names[i],"]"))]),
+    #     "y"     = bquote(~mu[.(paste0("[",study_names[i],"]"))])
     #   ))
     # }
 
   }else if(par == "PET"){
 
-    par_names <- list(bquote("PET"~.(add_type)))
+    par_names <- list(switch(
+      output_scale,
+      "r"     = expression("PET"~(rho)),
+      "d"     = expression("PET"~("Cohen's"~italic(d))),
+      "z"     = expression("PET"~("Fisher's"~italic(z))),
+      "logOR" = expression("PET"~("log"(italic("OR")))),
+      "OR"    = expression("PET"~(italic("OR"))),
+      "y"     = expression("PET")
+    ))
+
+    par_names <- list(bquote("PET"))
 
   }else if(par == "PEESE"){
 
-    par_names <- list(bquote("PEESE"~.(add_type)))
+    par_names <- list(switch(
+      output_scale,
+      "r"     = expression("PEESE"~(rho)),
+      "d"     = expression("PEESE"~("Cohen's"~italic(d))),
+      "z"     = expression("PEESE"~("Fisher's"~italic(z))),
+      "logOR" = expression("PEESE"~("log"(italic("OR")))),
+      "OR"    = expression("PEESE"~(italic("OR"))),
+      "y"     = expression("PEESE")
+    ))
 
   }
 

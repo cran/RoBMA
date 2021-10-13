@@ -8,6 +8,7 @@ plot_models(
   x,
   parameter = "mu",
   conditional = FALSE,
+  output_scale = NULL,
   plot_type = "base",
   order = "decreasing",
   order_by = "model",
@@ -27,6 +28,10 @@ estimates. Note that both \code{"weightfunction"} and
 \code{"PET-PEESE"} are always ignoring the other type of
 publication bias adjustment.}
 
+\item{output_scale}{transform the effect sizes and the meta-analytic
+effect size estimate to a different scale. Defaults to \code{NULL}
+which returns the same scale as the model was estimated on.}
+
 \item{plot_type}{whether to use a base plot \code{"base"}
 or ggplot2 \code{"ggplot"} for plotting. Defaults to
 \code{"base"}.}
@@ -34,7 +39,7 @@ or ggplot2 \code{"ggplot"} for plotting. Defaults to
 \item{order}{how the models should be ordered.
 Defaults to \code{"decreasing"} which orders them in decreasing
 order in accordance to \code{order_by} argument. The alternative is
-\code{"decreasing"}.}
+\code{"increasing"}.}
 
 \item{order_by}{what feature should be use to order the models.
 Defaults to \code{"model"} which orders the models according to

@@ -5,7 +5,10 @@
 #' the ensemble with different prior (or list of prior) distributions
 #' for each component.
 #'
-#' @param model_type string specifying the RoBMA enseble. Defaults to \code{NULL}.
+#' @param data a data object created by the \code{combine_data} function. This is
+#' an alternative input entry to specifying the \code{d}, \code{r}, \code{y}, etc...
+#' directly. I.e., you cannot pass the a data.frame and reference to the columns.
+#' @param model_type string specifying the RoBMA ensemble. Defaults to \code{NULL}.
 #' The other options are \code{"PSMA"}, \code{"PP"}, and \code{"2w"} which override
 #' settings passed to the \code{priors_effect}, \code{priors_heterogeneity},
 #' \code{priors_effect}, \code{priors_effect_null}, \code{priors_heterogeneity_null},
@@ -91,6 +94,7 @@
 #' @param silent whether all print messages regarding the fitting process
 #' should be suppressed. Defaults to \code{TRUE}. Note that \code{parallel = TRUE}
 #' also suppresses all messages.
+#' @param ... additional arguments.
 #' @inheritParams combine_data
 #'
 #' @details The default settings of the RoBMA 2.0 package corresponds to the RoBMA-PSMA
@@ -101,9 +105,11 @@
 #' \insertCite{bartos2021no;textual}{RoBMA} can be obtained by setting
 #' \code{model_type = "PP"}.
 #'
-#' The \code{vignette("CustomEnsembles")} and \code{vignette("ReproducingBMA")} vignettes
-#' describe how to use [RoBMA()] to fit custom meta-analytic ensembles (see [prior()]
-#' for more information about prior distributions).
+#' The \href{../doc/CustomEnsembles.html}{\code{vignette("CustomEnsembles", package = "RoBMA")}}
+#' and \href{../doc/ReproducingBMA.html}{\code{vignette("ReproducingBMA", package = "RoBMA")}}
+#' vignettes  describe how to use [RoBMA()] to fit custom meta-analytic ensembles (see [prior()],
+#' [prior_weightfunction()], [prior_PET()], and [prior_PEESE()] for more information about prior
+#' distributions).
 #'
 #' The RoBMA function first generates models from a combination of the
 #' provided priors for each of the model parameters. Then, the individual models
@@ -199,8 +205,9 @@ RoBMA <- function(
   autofit = TRUE, autofit_control = set_autofit_control(), convergence_checks = set_convergence_checks(),
 
   # additional settings
-  save = "all", seed = NULL, silent = TRUE){
+  save = "all", seed = NULL, silent = TRUE, ...){
 
+  dots         <- .RoBMA_collect_dots(...)
   object       <- NULL
   object$call  <- match.call()
 
@@ -242,8 +249,15 @@ RoBMA <- function(
   ### fit the models and compute marginal likelihoods
   if(!object$fit_control[["parallel"]]){
 
+    if(dots[["is_JASP"]]){
+      .JASP_progress_bar_start(length(object[["models"]]))
+    }
+
     for(i in seq_along(object[["models"]])){
       object$models[[i]] <- .fit_RoBMA_model(object, i)
+      if(dots[["is_JASP"]]){
+        .JASP_progress_bar_tick()
+      }
     }
 
   }else{
