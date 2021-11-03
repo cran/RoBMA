@@ -17,7 +17,8 @@
 ##' methodology.
 ##'
 ##' More details regarding customization of the model ensembles are provided in the
-##' \href{../doc/ReproducingBMA.html}{\bold{Reproducing BMA}} and
+##' \href{../doc/ReproducingBMA.html}{\bold{Reproducing BMA}},
+##' \href{../doc/MedicineBMA.html}{\bold{BMA in Medicine}}, and
 ##' \href{../doc/CustomEnsembles.html}{\bold{Fitting custom meta-analytic ensembles}}
 ##' vignettes. Please, use the "Issues" section in the GitHub repository to ask any
 ##' further questions.
