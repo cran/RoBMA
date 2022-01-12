@@ -1,5 +1,5 @@
 ---
-title: "Informed Bayesian Model-Average Meta-Analysis in Medicine"
+title: "Informed Bayesian Model-Averaged Meta-Analysis in Medicine"
 author: "František Bartoš"
 date: "`r Sys.Date()`"
 output:
@@ -8,7 +8,7 @@ output:
 bibliography: ../inst/REFERENCES.bib
 csl: ../inst/apa.csl
 vignette: >
-  %\VignetteIndexEntry{Informed Bayesian Model-Average Meta-Analysis in Medicine}
+  %\VignetteIndexEntry{Informed Bayesian Model-Averaged Meta-Analysis in Medicine}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown_notangle}

@@ -1,5 +1,5 @@
 ---
-title: "Fitting custom meta-analytic ensembles"
+title: "Fitting Custom Meta-Analytic Ensembles"
 author: "František Bartoš"
 date: "`r Sys.Date()`"
 output:
@@ -8,7 +8,7 @@ output:
 bibliography: ../inst/REFERENCES.bib
 csl: ../inst/apa.csl
 vignette: >
-  %\VignetteIndexEntry{Fitting custom meta-analytic ensembles}
+  %\VignetteIndexEntry{Fitting Custom Meta-Analytic Ensembles}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown_notangle}
