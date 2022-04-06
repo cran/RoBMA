@@ -19,6 +19,37 @@ fit_BMA_est    <- readRDS(file = "../models/ReproducingBMA/BMA_PowerPoseEst.RDS"
 fit_RoBMA_test <- readRDS(file = "../models/ReproducingBMA/PowerPoseTest.RDS")
 fit_RoBMA_est  <- readRDS(file = "../models/ReproducingBMA/PowerPoseEst.RDS")
 
+## ----include = FALSE, eval = FALSE--------------------------------------------
+#  # R package version updating
+#  library(RoBMA)
+#  
+#  data("power_pose", package = "metaBMA")
+#  
+#  fit_RoBMA_test <- RoBMA(d = power_pose$effectSize, se = power_pose$SE, study_names = power_pose$study,
+#                          priors_effect  = prior(
+#                            distribution = "cauchy",
+#                            parameters = list(location = 0, scale = 1/sqrt(2)),
+#                            truncation = list(0, Inf)),
+#                          priors_heterogeneity = prior(
+#                            distribution = "invgamma",
+#                            parameters = list(shape = 1, scale = 0.15)),
+#                          priors_bias = NULL,
+#                          transformation = "cohens_d", seed = 1, parallel = TRUE)
+#  
+#  fit_RoBMA_est  <- RoBMA(d = power_pose$effectSize, se = power_pose$SE, study_names = power_pose$study,
+#                          priors_effect  = prior(
+#                            distribution = "cauchy",
+#                            parameters = list(location = 0, scale = 1/sqrt(2))),
+#                          priors_heterogeneity = prior(
+#                            distribution = "invgamma",
+#                            parameters = list(shape = 1, scale = 0.15)),
+#                          priors_bias = NULL,
+#                          priors_effect_null = NULL,
+#                          transformation = "cohens_d", seed = 2, parallel = TRUE)
+#  
+#  saveRDS(fit_RoBMA_test, file = "../models/ReproducingBMA/PowerPoseTest.RDS")
+#  saveRDS(fit_RoBMA_est, file = "../models/ReproducingBMA/PowerPoseEst.RDS")
+
 ## -----------------------------------------------------------------------------
 data("power_pose", package = "metaBMA")
 power_pose[,c("study", "effectSize", "SE")]

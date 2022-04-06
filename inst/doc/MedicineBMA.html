@@ -12,7 +12,7 @@
 
 <meta name="author" content="František Bartoš" />
 
-<meta name="date" content="2022-01-05" />
+<meta name="date" content="2022-04-06" />
 
 <title>Informed Bayesian Model-Averaged Meta-Analysis in Medicine</title>
 
@@ -163,11 +163,11 @@ div.csl-indent {
 
 <h1 class="title toc-ignore">Informed Bayesian Model-Averaged Meta-Analysis in Medicine</h1>
 <h4 class="author">František Bartoš</h4>
-<h4 class="date">2022-01-05</h4>
+<h4 class="date">2022-04-06</h4>
 
 
 
-<p>Bayesian model-averaged meta-analysis allows researchers to seamlessly incorporate available prior information into the analysis <span class="citation">(Bartoš, Gronau, et al., 2021; Gronau et al., 2017, 2021)</span>. This vignette illustrates how to do this with an example from <span class="citation">Bartoš, Gronau, et al. (2021)</span>, who developed informed prior distributions for meta-analyses of continuous outcomes based on the Cochrane database of systematic reviews. Then, we extend the example by incorporating publication bias adjustment with robust Bayesian meta-analysis <span class="citation">(Bartoš, Maier, Wagenmakers, et al., 2021; Maier et al., in press)</span>.</p>
+<p>Bayesian model-averaged meta-analysis allows researchers to seamlessly incorporate available prior information into the analysis <span class="citation">(Bartoš, Gronau, et al., 2021; Gronau et al., 2017, 2021)</span>. This vignette illustrates how to do this with an example from <span class="citation">Bartoš, Gronau, et al. (2021)</span>, who developed informed prior distributions for meta-analyses of continuous outcomes based on the Cochrane database of systematic reviews. Then, we extend the example by incorporating publication bias adjustment with robust Bayesian meta-analysis <span class="citation">(Bartoš, Maier, et al., 2021; Maier et al., in press)</span>.</p>
 <div id="reproducing-informed-bayesian-model-averaged-meta-analysis-bma" class="section level3">
 <h3>Reproducing Informed Bayesian Model-Averaged Meta-Analysis (BMA)</h3>
 <p>We illustrate how to fit the informed BMA (not adjusting for publication bias) using the <code>RoBMA</code> R package. For this purpose, we reproduce the dentine hypersensitivity example from <span class="citation">Bartoš, Gronau, et al. (2021)</span>, who reanalyzed five studies with a tactile outcome assessment that were subjected to a meta-analysis by <span class="citation">Poulsen et al. (2006)</span>.</p>
@@ -207,20 +207,22 @@ div.csl-indent {
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Models Prior prob. Post. prob. Inclusion BF</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Effect           2/4       0.500       0.995      217.517</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Heterogeneity    2/4       0.500       0.778        3.511</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bias             0/4       0.000       0.000        0.000</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Models Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2/4       0.500       0.995      217.517</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    2/4       0.500       0.778        3.511</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0/4       0.000       0.000        0.000</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  1.076  1.088 0.664 1.422</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.231  0.208 0.000 0.726</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Conditional estimates:</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  1.082  1.090 0.701 1.422</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.297  0.255 0.075 0.779</span></span></code></pre></div>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Conditional estimates:</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  1.082  1.090 0.701 1.422</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.297  0.255 0.075 0.779</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span></code></pre></div>
 <p>The output from the <code>summary.RoBMA()</code> function has 3 parts. The first one under the ‘Robust Bayesian Meta-Analysis’ heading provides a basic summary of the fitted models by component types (presence of the Effect/Heterogeneity/Publication bias). We can see that there are no models correcting for publication bias (we disabled them by setting <code>priors_bias = NULL</code>). Furthermore, the table summarizes the prior and posterior probabilities and the inclusion Bayes factors of the individual components. The results show that the inclusion Bayes factor for the effect corresponds to the one reported in <span class="citation">Bartoš, Gronau, et al. (2021)</span> package, <span class="math inline">\(\text{BF}_{10} = 218.53\)</span> and <span class="math inline">\(\text{BF}_{\text{rf}} = 3.52\)</span> (up to an MCMC error).</p>
 <p>The second part under the ‘Model-averaged estimates’ heading displays the parameter estimates model-averaged across all specified models (i.e., including models specifying the effect size to be zero). We ignore this section and move to the last part.</p>
 <p>The third part under the ‘Conditional estimates’ heading displays the conditional effect size estimate corresponding to the one reported in <span class="citation">Bartoš, Gronau, et al. (2021)</span>, <span class="math inline">\(\delta = 1.082\)</span>, 95% CI [0.686,1.412], and a heterogeneity estimate (not reported previously).</p>
@@ -244,7 +246,7 @@ div.csl-indent {
 </div>
 <div id="adjusting-for-publication-bias-with-robust-bayesian-meta-analysis" class="section level3">
 <h3>Adjusting for Publication Bias with Robust Bayesian Meta-Analysis</h3>
-<p>Finally, we illustrate how to adjust our informed BMA for publication bias with robust Bayesian meta-analysis <span class="citation">Maier et al. (in press)</span>. In short, we specify additional models assuming the presence of the publication bias and correcting for it by either specifying a selection model operating on <span class="math inline">\(p\)</span>-values <span class="citation">(Vevea &amp; Hedges, 1995)</span> or by specifying a publication bias adjustment method correcting for the relationship between effect sizes and standard errors – PET-PEESE <span class="citation">(Stanley, 2017; Stanley &amp; Doucouliagos, 2014)</span>. See <span class="citation">Bartoš, Maier, Quintana, et al. (2021)</span> for a tutorial.</p>
+<p>Finally, we illustrate how to adjust our informed BMA for publication bias with robust Bayesian meta-analysis <span class="citation">Maier et al. (in press)</span>. In short, we specify additional models assuming the presence of the publication bias and correcting for it by either specifying a selection model operating on <span class="math inline">\(p\)</span>-values <span class="citation">(Vevea &amp; Hedges, 1995)</span> or by specifying a publication bias adjustment method correcting for the relationship between effect sizes and standard errors – PET-PEESE <span class="citation">(Stanley, 2017; Stanley &amp; Doucouliagos, 2014)</span>. See <span class="citation">Bartoš et al. (in press)</span> for a tutorial.</p>
 <p>To obtain a proper before and after publication bias adjustment comparison, we fit the informed BMA model but using the default effect size transformation (Fisher’s <span class="math inline">\(z\)</span>).</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fit_BMAb <span class="ot">&lt;-</span> <span class="fu">RoBMA</span>(<span class="at">d =</span> Poulsen2006<span class="sc">$</span>d, <span class="at">se =</span> Poulsen2006<span class="sc">$</span>se, <span class="at">study_names =</span> Poulsen2006<span class="sc">$</span>study,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">priors_effect        =</span> <span class="fu">prior_informed</span>(<span class="at">name =</span> <span class="st">&quot;oral health&quot;</span>, <span class="at">parameter =</span> <span class="st">&quot;effect&quot;</span>, <span class="at">type =</span> <span class="st">&quot;smd&quot;</span>),</span>
@@ -261,22 +263,24 @@ div.csl-indent {
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Models Prior prob. Post. prob. Inclusion BF</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Effect           2/4       0.500       0.997      347.932</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Heterogeneity    2/4       0.500       0.723        2.608</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bias             0/4       0.000       0.000        0.000</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Models Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2/4       0.500       0.997      347.932</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    2/4       0.500       0.723        2.608</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0/4       0.000       0.000        0.000</span></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  1.045  1.052 0.705 1.344</span></span>
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.186  0.163 0.000 0.623</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Conditional estimates:</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  1.048  1.053 0.720 1.344</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.256  0.220 0.064 0.681</span></span></code></pre></div>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Conditional estimates:</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  1.048  1.053 0.720 1.344</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.256  0.220 0.064 0.681</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span></code></pre></div>
 <p>We obtain noticeably stronger evidence for the presence of the effect. This is a result of placing more weights on the fixed-effect models, especially the fixed-effect model assuming the presence of the effect <span class="math inline">\(H_1^f\)</span>. The increase in the posterior model probability of <span class="math inline">\(H_1^f\)</span> is, in our case, the fact that it predicted the data slightly better after removing the correlation between effect sizes and standard errors (a result of using Cohen’s <span class="math inline">\(d\)</span> for model fitting). Nevertheless, the conditional effect size estimate stayed almost the same.</p>
-<p>Now, we fit the publication bias-adjusted model by simply removing the <code>priors_bias = NULL</code>, which allows us to obtain the default 36 models ensemble called RoBMA-PSMA <span class="citation">(Bartoš, Maier, Wagenmakers, et al., 2021)</span>.</p>
+<p>Now, we fit the publication bias-adjusted model by simply removing the <code>priors_bias = NULL</code>, which allows us to obtain the default 36 models ensemble called RoBMA-PSMA <span class="citation">(Bartoš, Maier, et al., 2021)</span>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit_RoBMA <span class="ot">&lt;-</span> <span class="fu">RoBMA</span>(<span class="at">d =</span> Poulsen2006<span class="sc">$</span>d, <span class="at">se =</span> Poulsen2006<span class="sc">$</span>se, <span class="at">study_names =</span> Poulsen2006<span class="sc">$</span>study,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">priors_effect        =</span> <span class="fu">prior_informed</span>(<span class="at">name =</span> <span class="st">&quot;oral health&quot;</span>, <span class="at">parameter =</span> <span class="st">&quot;effect&quot;</span>, <span class="at">type =</span> <span class="st">&quot;smd&quot;</span>),</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">priors_heterogeneity =</span> <span class="fu">prior_informed</span>(<span class="at">name =</span> <span class="st">&quot;oral health&quot;</span>, <span class="at">parameter =</span> <span class="st">&quot;heterogeneity&quot;</span>, <span class="at">type =</span> <span class="st">&quot;smd&quot;</span>),</span>
@@ -291,10 +295,10 @@ div.csl-indent {
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Models Prior prob. Post. prob. Inclusion BF</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Effect         18/36       0.500       0.858        6.022</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Heterogeneity  18/36       0.500       0.714        2.502</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bias           32/36       0.500       0.697        2.304</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Models Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  18/36       0.500       0.858        6.022</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  18/36       0.500       0.714        2.502</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  32/36       0.500       0.697        2.304</span></span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                    Mean Median 0.025  0.975</span></span>
@@ -308,21 +312,23 @@ div.csl-indent {
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.975,1]    0.897  1.000 0.057  1.000</span></span>
 <span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PET               0.931  0.000 0.000  4.927</span></span>
 <span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PEESE             1.131  0.000 0.000 12.261</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Estimated publication weights omega correspond to one-sided p-values.)</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Conditional estimates:</span></span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                    Mean Median  0.025  0.975</span></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu                0.838  0.938 -0.035  1.297</span></span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau               0.285  0.227  0.064  0.906</span></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0,0.025]    1.000  1.000  1.000  1.000</span></span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.025,0.05] 0.736  0.829  0.092  1.000</span></span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.05,0.5]   0.411  0.373  0.014  0.951</span></span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.5,0.95]   0.320  0.249  0.008  0.919</span></span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.95,0.975] 0.376  0.311  0.009  0.958</span></span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.975,1]    0.518  0.425  0.010  1.000</span></span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PET               2.909  3.136  0.171  5.614</span></span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PEESE             7.048  6.034  0.375 18.162</span></span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Estimated publication weights omega correspond to one-sided p-values.)</span></span></code></pre></div>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Estimated publication weights omega correspond to one-sided p-values.)</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Conditional estimates:</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                    Mean Median  0.025  0.975</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu                0.838  0.938 -0.035  1.297</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau               0.285  0.227  0.064  0.906</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0,0.025]    1.000  1.000  1.000  1.000</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.025,0.05] 0.736  0.829  0.092  1.000</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.05,0.5]   0.411  0.373  0.014  0.951</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.5,0.95]   0.320  0.249  0.008  0.919</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.95,0.975] 0.376  0.311  0.009  0.958</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.975,1]    0.518  0.425  0.010  1.000</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PET               2.909  3.136  0.171  5.614</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PEESE             7.048  6.034  0.375 18.162</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Estimated publication weights omega correspond to one-sided p-values.)</span></span></code></pre></div>
 <p>We notice that additional values in the ‘Components summary’ table in the ‘Bias’ row. The model is now extended with 32 publication bias adjustment models that account for 50% of the prior model probability. When comparing the RoBMA to the second BMA fit, we notice a large decrease in the inclusion Bayes factor for the presence of the effect <span class="math inline">\(\text{BF}_{10} = 6.02\)</span> vs. <span class="math inline">\(\text{BF}_{10} = 347.93\)</span>, which still, however, presents moderate evidence for the presence of the effect. We can further quantify the evidence in favor of the publication bias with the inclusion Bayes factor for publication bias <span class="math inline">\(\text{BF}_{pb} = 2.30\)</span>, which can be interpreted as weak evidence in favor of the publication bias.</p>
 <p>We can also compare the publication bias unadjusted and publication bias-adjusted conditional effect size estimates. Including models assuming publication bias into our model-averaged estimate (assuming the presence of the effect) slightly decreases the estimated effect to <span class="math inline">\(\delta = 0.838\)</span>, 95% CI [-0.035, 1.297] with a much wider confidence interval, as visualized in the prior and posterior conditional effect size estimate plot.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_RoBMA, <span class="at">parameter =</span> <span class="st">&quot;mu&quot;</span>, <span class="at">prior =</span> <span class="cn">TRUE</span>, <span class="at">conditional =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
@@ -340,7 +346,7 @@ div.csl-indent {
 Bartoš, F., Gronau, Q. F., Timmers, B., Otte, W. M., Ly, A., &amp; Wagenmakers, E.-J. (2021). Bayesian model-averaged meta-analysis in medicine. <em>Statistics in Medicine</em>. <a href="https://doi.org/10.1002/sim.9170">https://doi.org/10.1002/sim.9170</a>
 </div>
 <div id="ref-bartos2020adjusting" class="csl-entry">
-Bartoš, F., Maier, M., Quintana, D. S., &amp; Wagenmakers, E.-J. (2021). Adjusting for publication bias in <span>JASP</span> &amp; <span>R</span> – selection models, <span>PET-PEESE</span>, and robust <span>B</span>ayesian meta-analysis. In <em>PsyArXiv</em>. <a href="https://doi.org/10.31234/osf.io/75bqn">https://doi.org/10.31234/osf.io/75bqn</a>
+Bartoš, F., Maier, M., Quintana, D. S., &amp; Wagenmakers, E.-J. (in press). Adjusting for publication bias in <span>JASP</span> &amp; <span>R</span> – selection models, <span>PET-PEESE</span>, and robust <span>B</span>ayesian meta-analysis. <em>Advances in Methods and Practices in Psychological Science</em>. <a href="https://doi.org/10.31234/osf.io/75bqn">https://doi.org/10.31234/osf.io/75bqn</a>
 </div>
 <div id="ref-bartos2021no" class="csl-entry">
 Bartoš, F., Maier, M., Wagenmakers, E.-J., Doucouliagos, H., &amp; Stanley, T. D. (2021). <em>Need to choose: <span>R</span>obust <span>B</span>ayesian meta-analysis with competing publication bias adjustment methods</em>. PsyArXiv. <a href="https://doi.org/10.31234/osf.io/kvsp7">https://doi.org/10.31234/osf.io/kvsp7</a>

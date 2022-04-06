@@ -132,8 +132,9 @@ First, we load the package and the data set included in the package.
 ``` r
 library(RoBMA)
 #> Loading required namespace: runjags
+#> Loading required namespace: mvtnorm
 #> module RoBMA loaded
-#> This is a 2.1 version of the RoBMA package (see NEWS for detailed overview of the changes).
+#> This is a 2.0 version of the RoBMA package (see NEWS for detailed overview of the changes).
 
 data("Bem2011", package = "RoBMA")
 Bem2011

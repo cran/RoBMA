@@ -12,7 +12,7 @@
 
 <meta name="author" content="František Bartoš" />
 
-<meta name="date" content="2022-01-05" />
+<meta name="date" content="2022-04-06" />
 
 <title>Reproducing Bayesian Model-Averaged Meta-Analysis</title>
 
@@ -163,11 +163,11 @@ div.csl-indent {
 
 <h1 class="title toc-ignore">Reproducing Bayesian Model-Averaged Meta-Analysis</h1>
 <h4 class="author">František Bartoš</h4>
-<h4 class="date">2022-01-05</h4>
+<h4 class="date">2022-04-06</h4>
 
 
 
-<p>By default, the package estimates an ensemble of 36 meta-analytic models and provides functions for convenient manipulation with the fitted object. However, it has been built in a way that it can be used as a framework for estimating any combination of meta-analytic models (or a single model). Here, we illustrate how to build a custom ensemble of meta-analytic models - specifically the same ensemble that is used in ‘classical’ Bayesian Model-Averaged Meta-Analysis <span class="citation">(Bartoš, Gronau, et al., 2021; Gronau et al., 2017, 2021)</span>. See <a href="CustomEnsembles.html">this vignette</a> if you are interested in building more customized ensembles or <span class="citation">Bartoš, Maier, et al. (2021)</span> for a tutorial on fitting (custom) models in JASP.</p>
+<p>By default, the package estimates an ensemble of 36 meta-analytic models and provides functions for convenient manipulation with the fitted object. However, it has been built in a way that it can be used as a framework for estimating any combination of meta-analytic models (or a single model). Here, we illustrate how to build a custom ensemble of meta-analytic models - specifically the same ensemble that is used in ‘classical’ Bayesian Model-Averaged Meta-Analysis <span class="citation">(Bartoš et al., 2021; Gronau et al., 2017, 2021)</span>. See <a href="CustomEnsembles.html">this vignette</a> if you are interested in building more customized ensembles or <span class="citation">Bartoš et al. (in press)</span> for a tutorial on fitting (custom) models in JASP.</p>
 <div id="reproducing-bayesian-model-averaged-meta-analysis-bma" class="section level3">
 <h3>Reproducing Bayesian Model-Averaged Meta-Analysis (BMA)</h3>
 <p>We illustrate how to fit a classical BMA (not adjusting for publication bias) using <code>RoBMA</code>. For this purpose, we reproduce a meta-analysis of registered reports on Power posing by <span class="citation">Gronau et al. (2017)</span>. We focus only on the analysis using all reported results using a Cauchy prior distribution with scale <span class="math inline">\(1/\sqrt{2}\)</span> for the effect size estimation (half-Cauchy for testing) and inverse-gamma distribution with scale = 1 and shape 0.15 for the heterogeneity parameter. You can find the figure from the original publication <a href="https://www.flickr.com/photos/149473606@N08/34086113581/in/dateposted-public/">here</a> and the paper’s supplementary materials at <a href="https://osf.io/fxg32/" class="uri">https://osf.io/fxg32/</a>.</p>
@@ -244,36 +244,38 @@ div.csl-indent {
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Models Prior prob. Post. prob. Inclusion BF</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Effect           2/4       0.500       0.971       33.112</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Heterogeneity    2/4       0.500       0.214        0.273</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bias             0/4       0.000       0.000        0.000</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Models Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2/4       0.500       0.971       33.112</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    2/4       0.500       0.214        0.273</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0/4       0.000       0.000        0.000</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  0.213  0.217 0.000 0.348</span></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.022  0.000 0.000 0.178</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_RoBMA_est)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; RoBMA(d = power_pose$effectSize, se = power_pose$SE, study_names = power_pose$study, </span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     transformation = &quot;cohens_d&quot;, priors_effect = prior(distribution = &quot;cauchy&quot;, </span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         parameters = list(location = 0, scale = 1/sqrt(2))), </span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     priors_heterogeneity = prior(distribution = &quot;invgamma&quot;, parameters = list(shape = 1, </span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         scale = 0.15)), priors_bias = NULL, priors_effect_null = NULL, </span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     parallel = TRUE, seed = 2)</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Models Prior prob. Post. prob. Inclusion BF</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Effect           2/2       1.000       1.000          Inf</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Heterogeneity    1/2       0.500       0.200        0.250</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bias             0/2       0.000       0.000        0.000</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  0.220  0.220 0.096 0.346</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.019  0.000 0.000 0.152</span></span></code></pre></div>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_RoBMA_est)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; RoBMA(d = power_pose$effectSize, se = power_pose$SE, study_names = power_pose$study, </span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     transformation = &quot;cohens_d&quot;, priors_effect = prior(distribution = &quot;cauchy&quot;, </span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         parameters = list(location = 0, scale = 1/sqrt(2))), </span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     priors_heterogeneity = prior(distribution = &quot;invgamma&quot;, parameters = list(shape = 1, </span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         scale = 0.15)), priors_bias = NULL, priors_effect_null = NULL, </span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     parallel = TRUE, seed = 2)</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Models Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2/2       1.000       1.000          Inf</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    1/2       0.500       0.200        0.250</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0/2       0.000       0.000        0.000</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Mean Median 0.025 0.975</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu  0.220  0.220 0.096 0.346</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau 0.019  0.000 0.000 0.152</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span></code></pre></div>
 <p>The output from the <code>summary.RoBMA()</code> function has 2 parts. The first one under the “Robust Bayesian Meta-Analysis” heading provides a basic summary of the fitted models by component types (presence of the Effect/Heterogeneity/Publication bias). We can see that there are no models correcting for publication bias (we disabled them by setting <code>priors_bias = NULL</code>). Furthermore, the table summarizes the prior and posterior probabilities and the inclusion Bayes factors of the individual components. The results for the half-Cauchy model specified for testing show that the inclusion BF is basically identical to the one computed by the <code>metaBMA</code> package, <span class="math inline">\(\text{BF}_{10} = 33.11\)</span>.</p>
 <p>The second part under the ‘Model-averaged estimates’ heading displays the parameter estimates. The results for the unrestricted Cauchy model specified for estimation show the effect size estimate <span class="math inline">\(\mu = 0.22\)</span>, 95% CI [0.10, 0.35] that also mirrors the one obtained from <code>metaBMA</code> package.</p>
 </div>
@@ -300,7 +302,7 @@ div.csl-indent {
 Bartoš, F., Gronau, Q. F., Timmers, B., Otte, W. M., Ly, A., &amp; Wagenmakers, E.-J. (2021). Bayesian model-averaged meta-analysis in medicine. <em>Statistics in Medicine</em>. <a href="https://doi.org/10.1002/sim.9170">https://doi.org/10.1002/sim.9170</a>
 </div>
 <div id="ref-bartos2020adjusting" class="csl-entry">
-Bartoš, F., Maier, M., Quintana, D. S., &amp; Wagenmakers, E.-J. (2021). Adjusting for publication bias in <span>JASP</span> &amp; <span>R</span> – selection models, <span>PET-PEESE</span>, and robust <span>B</span>ayesian meta-analysis. In <em>PsyArXiv</em>. <a href="https://doi.org/10.31234/osf.io/75bqn">https://doi.org/10.31234/osf.io/75bqn</a>
+Bartoš, F., Maier, M., Quintana, D. S., &amp; Wagenmakers, E.-J. (in press). Adjusting for publication bias in <span>JASP</span> &amp; <span>R</span> – selection models, <span>PET-PEESE</span>, and robust <span>B</span>ayesian meta-analysis. <em>Advances in Methods and Practices in Psychological Science</em>. <a href="https://doi.org/10.31234/osf.io/75bqn">https://doi.org/10.31234/osf.io/75bqn</a>
 </div>
 <div id="ref-gronau2020primer" class="csl-entry">
 Gronau, Q. F., Heck, D. W., Berkhout, S. W., Haaf, J. M., &amp; Wagenmakers, E.-J. (2021). A primer on <span>B</span>ayesian model-averaged meta-analysis. <em>Advances in Methods and Practices in Psychological Science</em>, <em>4</em>(3), 25152459211031256. <a href="https://doi.org/10.1177/25152459211031256">https://doi.org/10.1177/25152459211031256</a>

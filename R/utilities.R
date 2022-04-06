@@ -23,23 +23,12 @@ RoBMA.options    <- function(...){
 
 	opts <- list(...)
 
-	if(length(opts) > 0){
+	for(i in seq_along(opts)){
 
-		options    <- RoBMA.private$options
-		recognised <- pmatch(names(opts), names(options))
+	  if(!names(opts)[i] %in% names(RoBMA.private))
+	    stop(paste("Unmatched or ambiguous option '", names(opts)[i], "'", sep=""))
 
-		if(any(is.na(recognised))){
-			warning(paste("Igoring unmatched or ambiguous option(s): ", paste(names(opts)[is.na(recognised)], collapse=", ")))
-      opts <- opts[!is.na(recognised)]
-		}
-
-		optnames <- names(options)[recognised[!is.na(recognised)]]
-
-		if(length(optnames)>0) for(i in 1:length(optnames)){
-			options[optnames[i]] <- opts[[i]]
-		}
-
-		assign("options", options , envir = RoBMA.private)
+	  assign(names(opts)[i], opts[[i]] , envir = RoBMA.private)
 	}
 
 	return(invisible(RoBMA.private$options))
@@ -51,13 +40,11 @@ RoBMA.get_option <- function(name){
 	if(length(name)!=1)
 	  stop("Only 1 option can be retrieved at a time")
 
-	opt <- pmatch(name,names(RoBMA.private$options))
-
-	if(is.na(opt))
+	if(!name %in% names(RoBMA.private))
 	  stop(paste("Unmatched or ambiguous option '", name, "'", sep=""))
 
 	# Use eval as some defaults are put in using 'expression' to avoid evaluating at load time:
-	return(eval(RoBMA.private$options[[opt]]))
+	return(eval(RoBMA.private[[name]]))
 }
 
 
@@ -73,7 +60,7 @@ assign("options",         RoBMA.private$defaultoptions,   envir = RoBMA.private)
 assign("RoBMA_version",   "notset",                       envir = RoBMA.private)
 assign("min_jags_major",  4,                              envir = RoBMA.private)
 assign("max_jags_major",  4,                              envir = RoBMA.private)
-
+assign("max_cores",       parallel::detectCores(logical = TRUE) - 1,  envir = RoBMA.private)
 
 # check proper BayesTools package version
 .check_BayesTools <- function(){
@@ -89,21 +76,17 @@ assign("max_jags_major",  4,                              envir = RoBMA.private)
     return(invisible(FALSE))
   }
 
-  BayesTools_min <- switch(
+  BayesTools_required <- switch(
     paste0(RoBMA.version, collapse = "."),
-    "2.1.1" = "0.1.3",
-    "2.1.2" = "0.1.3",
-    stop("New RoBMA version needs to be defined in '.check_BayesTools' function!")
-  )
-  BayesTools_max <- switch(
-    paste0(RoBMA.version, collapse = "."),
-    "2.1.1" = "0.1.3",
-    "2.1.2" = "0.1.3",
+    "2.1.1" = c("0.1.3", "0.1.3"),
+    "2.1.2" = c("0.1.3", "0.1.3"),
+    "2.2.0" = c("0.1.3", "0.1.3"),
+    "2.2.1" = c("0.2.3", "0.2.999"),
     stop("New RoBMA version needs to be defined in '.check_BayesTools' function!")
   )
 
-  min_OK <- all(as.integer(strsplit(BayesTools_min, ".", fixed = TRUE)[[1]]) <= unlist(BayesTools.version))
-  max_OK <- all(as.integer(strsplit(BayesTools_max, ".", fixed = TRUE)[[1]]) >= unlist(BayesTools.version))
+  min_OK <- all(as.integer(strsplit(BayesTools_required[1], ".", fixed = TRUE)[[1]]) <= unlist(BayesTools.version))
+  max_OK <- all(as.integer(strsplit(BayesTools_required[2], ".", fixed = TRUE)[[1]]) >= unlist(BayesTools.version))
 
   if(min_OK && max_OK){
     return(invisible(TRUE))
@@ -111,9 +94,9 @@ assign("max_jags_major",  4,                              envir = RoBMA.private)
     warning(sprintf(
       "RoBMA version %1$s requires BayesTools version higher or equal %2$s and lower or equal %3$s.",
       paste0(RoBMA.version, collapse = "."),
-      BayesTools_min,
-      BayesTools_max
-    ), call.=FALSE)
+      BayesTools_required[1],
+      BayesTools_required[2]
+    ), call.= FALSE)
     return(invisible(FALSE))
   }
 }
