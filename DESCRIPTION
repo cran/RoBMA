@@ -1,6 +1,6 @@
 Package: RoBMA
 Title: Robust Bayesian Meta-Analyses
-Version: 2.2.1
+Version: 2.2.2
 Maintainer: František Bartoš <f.bartos96@gmail.com>
 Authors@R: c( 
     person("František", "Bartoš",     role = c("aut", "cre"),
@@ -33,7 +33,7 @@ BugReports: https://github.com/FBartos/RoBMA/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 SystemRequirements: JAGS >= 4.3.0 (https://mcmc-jags.sourceforge.io/)
 NeedsCompilation: yes
 Depends: R (>= 4.0.0)
@@ -45,7 +45,7 @@ Suggests: parallel, rstan, metaBMA, testthat, vdiffr, knitr, rmarkdown,
 LinkingTo: mvtnorm
 RdMacros: Rdpack
 VignetteBuilder: knitr
-Packaged: 2022-04-06 11:22:33 UTC; fbart
+Packaged: 2022-04-20 12:53:51 UTC; fbart
 Author: František Bartoš [aut, cre] (<https://orcid.org/0000-0002-0018-5573>),
   Maximilian Maier [aut] (<https://orcid.org/0000-0002-9873-6096>),
   Eric-Jan Wagenmakers [ths] (<https://orcid.org/0000-0003-1596-1034>),
@@ -55,4 +55,4 @@ Author: František Bartoš [aut, cre] (<https://orcid.org/0000-0002-0018-5573>),
   Martyn Plummer [cph] (Original copyright holder of some modified code
     where indicated.)
 Repository: CRAN
-Date/Publication: 2022-04-06 13:32:34 UTC
+Date/Publication: 2022-04-20 14:02:30 UTC
