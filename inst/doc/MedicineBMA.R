@@ -1,7 +1,7 @@
 ## ----setup, include = FALSE---------------------------------------------------
 is_check <- ("CheckExEnv" %in% search()) ||
               any(c("_R_CHECK_TIMINGS_", "_R_CHECK_LICENSE_") %in% names(Sys.getenv())) ||
-              !file.exists("../models/ReproducingBMA/BMA_PowerPoseTest.RDS")
+              !file.exists("../models/MedicineBMA/fit_BMA.RDS")
 knitr::opts_chunk$set(
   collapse  = TRUE,
   comment   = "#>",

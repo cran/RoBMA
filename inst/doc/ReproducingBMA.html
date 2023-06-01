@@ -12,7 +12,7 @@
 
 <meta name="author" content="František Bartoš" />
 
-<meta name="date" content="2023-03-13" />
+<meta name="date" content="2023-06-01" />
 
 <title>Reproducing Bayesian Model-Averaged Meta-Analysis</title>
 
@@ -363,20 +363,20 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Reproducing Bayesian Model-Averaged
 Meta-Analysis</h1>
 <h4 class="author">František Bartoš</h4>
-<h4 class="date">2023-03-13</h4>
+<h4 class="date">2023-06-01</h4>
 
 
 
-<p>By default, the package estimates an ensemble of 36 meta-analytic
-models and provides functions for convenient manipulation with the
-fitted object. However, it has been built in a way that it can be used
-as a framework for estimating any combination of meta-analytic models
-(or a single model). Here, we illustrate how to build a custom ensemble
-of meta-analytic models - specifically the same ensemble that is used in
-‘classical’ Bayesian Model-Averaged Meta-Analysis <span class="citation">(Bartoš et al., 2021; Gronau et al., 2017,
+<p>By default, the RoBMA package estimates an ensemble of 36
+meta-analytic models and provides functions for convenient manipulation
+with the fitted object. However, the package has been designed so it can
+be used as a framework for estimating any combination of meta-analytic
+models (or a single model). Here, we illustrate how to build a custom
+ensemble of meta-analytic models - specifically the same ensemble that
+is used in ‘classical’ Bayesian Model-Averaged Meta-Analysis <span class="citation">(Bartoš et al., 2021; Gronau et al., 2017,
 2021)</span>. See <a href="CustomEnsembles.html">this vignette</a> if
-you are interested in building more customized ensembles or <span class="citation">Bartoš et al. (in press)</span> for a tutorial on
-fitting (custom) models in JASP.</p>
+you are interested in building more customized ensembles or <span class="citation">Bartoš et al. (2022)</span> for a tutorial on fitting
+(custom) models in JASP.</p>
 <div id="reproducing-bayesian-model-averaged-meta-analysis-bma" class="section level3">
 <h3>Reproducing Bayesian Model-Averaged Meta-Analysis (BMA)</h3>
 <p>We illustrate how to fit a classical BMA (not adjusting for
@@ -587,11 +587,11 @@ Wagenmakers, E.-J. (2021). Bayesian model-averaged meta-analysis in
 medicine. <em>Statistics in Medicine</em>. <a href="https://doi.org/10.1002/sim.9170">https://doi.org/10.1002/sim.9170</a>
 </div>
 <div id="ref-bartos2020adjusting" class="csl-entry">
-Bartoš, F., Maier, M., Quintana, D. S., &amp; Wagenmakers, E.-J. (in
-press). Adjusting for publication bias in <span>JASP</span> &amp;
-<span>R</span> – selection models, <span>PET-PEESE</span>, and robust
-<span>B</span>ayesian meta-analysis. <em>Advances in Methods and
-Practices in Psychological Science</em>. <a href="https://doi.org/10.31234/osf.io/75bqn">https://doi.org/10.31234/osf.io/75bqn</a>
+Bartoš, F., Maier, Maximilian, Quintana, D. S., &amp; Wagenmakers, E.-J.
+(2022). Adjusting for publication bias in <span>JASP</span> and
+<span>R</span> — <span>S</span>election models, <span>PET-PEESE</span>,
+and robust <span>B</span>ayesian meta-analysis. <em>Advances in Methods
+and Practices in Psychological Science</em>, <em>5</em>(3), 1–19. <a href="https://doi.org/10.1177/25152459221109259">https://doi.org/10.1177/25152459221109259</a>
 </div>
 <div id="ref-gronau2020primer" class="csl-entry">
 Gronau, Q. F., Heck, D. W., Berkhout, S. W., Haaf, J. M., &amp;

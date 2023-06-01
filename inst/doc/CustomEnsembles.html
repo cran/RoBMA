@@ -12,7 +12,7 @@
 
 <meta name="author" content="František Bartoš" />
 
-<meta name="date" content="2023-03-13" />
+<meta name="date" content="2023-06-01" />
 
 <title>Fitting Custom Meta-Analytic Ensembles</title>
 
@@ -362,7 +362,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Fitting Custom Meta-Analytic Ensembles</h1>
 <h4 class="author">František Bartoš</h4>
-<h4 class="date">2023-03-13</h4>
+<h4 class="date">2023-06-01</h4>
 
 
 
@@ -370,21 +370,21 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 combination of all supplied prior distributions (across null and
 alternative specification), with their prior model weights being equal
 to the product of prior distributions’ weights. This results in the 36
-meta-analytic models using the default settings <span class="citation">(Bartoš, Maier, et al., 2021)</span><span class="math inline">\(^1\)</span>. In <a href="ReproducingBMA.html">another vignette</a>, we illustrated that
+meta-analytic models using the default settings <span class="citation">(Bartoš, Maier, et al., 2022b)</span><span class="math inline">\(^1\)</span>. In <a href="ReproducingBMA.html">another vignette</a>, we illustrated that
 RoBMA can be also utilized for reproducing Bayesian Model-Averaged
-Meta-Analysis (BMA) <span class="citation">(Bartoš, Gronau, et al.,
-2021; Gronau et al., 2017, 2021)</span>. However, the package was built
-as a framework for estimating highly customized meta-analytic model
+Meta-Analysis (BMA) <span class="citation">(Bartoš et al., 2021; Gronau
+et al., 2017, 2021)</span>. However, the package was built as a
+framework for estimating highly customized meta-analytic model
 ensembles. Here, we are going to illustrate how to do exactly that (see
-<span class="citation">Bartoš et al. (in press)</span> for a tutorial
-paper on customizing the model ensemble with JASP).</p>
+<span class="citation">Bartoš, Maier, et al. (2022a)</span> for a
+tutorial paper on customizing the model ensemble with JASP).</p>
 <p>Please keep in mind that all models should be justified by theory.
 Furthermore, the models should be tested to make sure that the ensemble
 can perform as intended a priori to drawing inference from it. The
 following sections are only for illustrating the functionality of the
 package. We provide a completely discussion with the relevant sources in
 the Example section of <span class="citation">Bartoš, Maier, et al.
-(2021)</span>.</p>
+(2022b)</span>.</p>
 <div id="the-dataset" class="section level3">
 <h3>The Dataset</h3>
 <p>To illustrate the custom model building procedure, we use data from
@@ -543,7 +543,7 @@ distribution based on empirical heterogeneity estimates <span class="citation">(
 parameter <span class="math inline">\(\tau\)</span>. For Models 4.1-4.4
 we use the default settings for the publication bias adjustments as
 outlined the Appendix B of <span class="citation">(Bartoš, Maier, et
-al., 2021)</span>.</p>
+al., 2022b)</span>.</p>
 <p>Now, we just need to add the remaining models to the ensemble using
 the <code>update()</code> function as already illustrated.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">### adding Model 3</span></span>
@@ -676,9 +676,9 @@ standard errors and effect sizes by setting
 <h3>Footnotes</h3>
 <p><span class="math inline">\(^1\)</span> - The default setting used to
 produce 12 models in RoBMA versions &lt; 2, which corresponded to
-earlier an article by <span class="citation">Maier et al. (in
-press)</span> in which we applied Bayesian model-averaging only across
-selection models.</p>
+earlier an article by <span class="citation">Maier et al. (2022)</span>
+in which we applied Bayesian model-averaging only across selection
+models.</p>
 </div>
 <div id="references" class="section level3 unnumbered">
 <h3 class="unnumbered">References</h3>
@@ -689,17 +689,17 @@ Wagenmakers, E.-J. (2021). Bayesian model-averaged meta-analysis in
 medicine. <em>Statistics in Medicine</em>. <a href="https://doi.org/10.1002/sim.9170">https://doi.org/10.1002/sim.9170</a>
 </div>
 <div id="ref-bartos2020adjusting" class="csl-entry">
-Bartoš, F., Maier, M., Quintana, D. S., &amp; Wagenmakers, E.-J. (in
-press). Adjusting for publication bias in <span>JASP</span> &amp;
-<span>R</span> – selection models, <span>PET-PEESE</span>, and robust
-<span>B</span>ayesian meta-analysis. <em>Advances in Methods and
-Practices in Psychological Science</em>. <a href="https://doi.org/10.31234/osf.io/75bqn">https://doi.org/10.31234/osf.io/75bqn</a>
+Bartoš, F., Maier, Maximilian, Quintana, D. S., &amp; Wagenmakers, E.-J.
+(2022a). Adjusting for publication bias in <span>JASP</span> and
+<span>R</span> — <span>S</span>election models, <span>PET-PEESE</span>,
+and robust <span>B</span>ayesian meta-analysis. <em>Advances in Methods
+and Practices in Psychological Science</em>, <em>5</em>(3), 1–19. <a href="https://doi.org/10.1177/25152459221109259">https://doi.org/10.1177/25152459221109259</a>
 </div>
 <div id="ref-bartos2021no" class="csl-entry">
 Bartoš, F., Maier, M., Wagenmakers, E.-J., Doucouliagos, H., &amp;
-Stanley, T. D. (2021). <em>Robust <span>B</span>ayesian meta-analysis:
+Stanley, T. D. (2022b). Robust <span>B</span>ayesian meta-analysis:
 <span>M</span>odel-averaging across complementary publication bias
-adjustment methods</em>. PsyArXiv. <a href="https://doi.org/10.31234/osf.io/kvsp7">https://doi.org/10.31234/osf.io/kvsp7</a>
+adjustment methods. <em>Research Synthesis Methods</em>. <a href="https://doi.org/10.1002/jrsm.1594">https://doi.org/10.1002/jrsm.1594</a>
 </div>
 <div id="ref-bem2011feeling" class="csl-entry">
 Bem, D. J. (2011). Feeling the future: Experimental evidence for
@@ -731,9 +731,9 @@ meta-analysis of the power pose effect with informed and default priors:
 Psychology</em>, <em>2</em>(1), 123–138. <a href="https://doi.org/10.1080/23743603.2017.1326760">https://doi.org/10.1080/23743603.2017.1326760</a>
 </div>
 <div id="ref-maier2020robust" class="csl-entry">
-Maier, M., Bartoš, F., &amp; Wagenmakers, E.-J. (in press). Robust
+Maier, M., Bartoš, F., &amp; Wagenmakers, E.-J. (2022). Robust
 <span>B</span>ayesian meta-analysis: Addressing publication bias with
-model-averaging. <em>Psychological Methods</em>. <a href="https://doi.org/10.31234/osf.io/u4cns">https://doi.org/10.31234/osf.io/u4cns</a>
+model-averaging. <em>Psychological Methods</em>. <a href="https://doi.org/10.1037/met0000405">https://doi.org/10.1037/met0000405</a>
 </div>
 </div>
 </div>

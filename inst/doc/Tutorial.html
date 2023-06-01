@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="František Bartoš, Maximilian Maier, Daniel S. Quintana &amp; Eric-Jan Wagenmakers" />
+
+<meta name="date" content="2022-01-01" />
+
+<title>Tutorial: Adjusting for Publication Bias in JASP and R - Selection Models, PET-PEESE, and Robust Bayesian Meta-Analysis</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Tutorial: Adjusting for Publication Bias in
+JASP and R - Selection Models, PET-PEESE, and Robust Bayesian
+Meta-Analysis</h1>
+<h4 class="author">František Bartoš, Maximilian Maier, Daniel S.
+Quintana &amp; Eric-Jan Wagenmakers</h4>
+<h4 class="date">2022</h4>
+
+
+
+<p><strong>This R markdown file accompanies the tutorial <a href="https://doi.org/10.1177/25152459221109259">Adjusting for
+publication bias in JASP and R: Selection models, PET-PEESE, and robust
+Bayesian meta-analysis</a> published in <em>Advances in Methods and
+Practices in Psychological Science</em> <span class="citation">(Bartoš,
+Maier, et al., 2022a)</span>.</strong></p>
+<p>The following R-markdown file illustrates how to:</p>
+<ul>
+<li>Load a CSV file into R,</li>
+<li>Transform effect sizes,</li>
+<li>Perform a random effect meta-analysis,</li>
+<li>Adjust for publication bias with:
+<ul>
+<li>PET-PEESE <span class="citation">(Stanley, 2017; Stanley &amp;
+Doucouliagos, 2014)</span>,</li>
+<li>Selection models <span class="citation">(Iyengar &amp; Greenhouse,
+1988; Vevea &amp; Hedges, 1995)</span>,</li>
+<li>Robust Bayesian meta-analysis (RoBMA) <span class="citation">(Bartoš, Maier, et al., 2022b; Maier et al.,
+2022)</span>.</li>
+</ul></li>
+</ul>
+<p>See the full paper for additional details regarding the data set,
+methods, and interpretation.</p>
+<div id="set-up" class="section level3">
+<h3>Set-up</h3>
+<p>Before we start, we need to install <code>JAGS</code> (which is
+needed for installation of the <code>RoBMA</code> package) and the R
+packages that we use in the analysis. Specifically the
+<code>RoBMA</code>, <code>weightr</code>, and <code>metafor</code> R
+packages.</p>
+<p>JAGS can be downloaded from the <a href="https://sourceforge.net/projects/mcmc-jags/">JAGS website</a>.
+Subsequently, we install the R packages with the
+<code>install.packages()</code> function.</p>
+<pre class="{r"><code>install.packages(c(&quot;RoBMA&quot;, &quot;weightr&quot;, &quot;metafor&quot;))</code></pre>
+<p>If you happen to use the new M1 Mac machines with Apple silicon, see
+<a href="https://www.dsquintana.blog/jags-apple-silicon-m1-mac/">this
+blogpost</a> outlining how to install JAGS on M1. In short, you will
+have to install Intel version of R (Intel/x86-64) from <a href="https://cran.r-project.org/bin/macosx/">CRAN</a>, not the Arm64
+(Apple silicon) version.</p>
+<p>Once all of the packages are installed, we can load them into the
+workspace with the <code>library()</code> function.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;metafor&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;weightr&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;RoBMA&quot;</span>)</span></code></pre></div>
+</div>
+<div id="lui-2015" class="section level3">
+<h3>Lui (2015)</h3>
+<p><span class="citation">Lui (2015)</span> studied how the
+acculturation mismatch (AM) that is the result of the contrast between
+the collectivist cultures of Asian and Latin immigrant groups and the
+individualist culture in the United States correlates with
+intergenerational cultural conflict (ICC). <span class="citation">Lui
+(2015)</span> meta-analyzed 18 independent studies correlating AM with
+ICC. A standard reanalysis indicates a significant effect of AM on
+increased ICC, r = 0.250, p &lt; .001.</p>
+<div id="data-manipulation" class="section level4">
+<h4>Data manipulation</h4>
+<p>First, we load the Lui2015.csv file into R with the
+<code>read.csv()</code> function and inspect the first six data entries
+with the <code>head()</code> function (the data set is also included in
+the package and can accessed via the
+<code>data(&quot;Lui2015&quot;, package = &quot;RoBMA&quot;)</code> call).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">&quot;Lui2015.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      r   n                   study</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 0.21 115 Ahn, Kim, &amp; Park (2008)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 0.29 283   Basanez et al. (2013)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 0.22  80         Bounkeua (2007)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 0.26 109        Hajizadeh (2009)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 0.23  61            Hamid (2007)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 0.54 107    Hwang &amp; Wood (2009a)</span></span></code></pre></div>
+<p>We see that the data set contains three columns. The first column
+called <code>r</code> contains the effect sizes coded as correlation
+coefficients, the second column called <code>n</code> contains the
+sample sizes, and the third column called <code>study</code> contains
+names of the individual studies.</p>
+<p>We can access the individual variables using the data set name and
+the dollar (<code>$</code>) sign followed by the name of the column. For
+example, we can print all of the effect sizes with the <code>df$r</code>
+command.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>r</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1]  0.21  0.29  0.22  0.26  0.23  0.54  0.56  0.29  0.26  0.02 -0.06  0.38</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13]  0.25  0.08  0.17  0.33  0.36  0.13</span></span></code></pre></div>
+<p>The printed output shows that the data set contains mostly positive
+effect sizes with the largest correlation coefficient r = 0.54.</p>
+</div>
+<div id="effect-size-transformations" class="section level4">
+<h4>Effect size transformations</h4>
+<p>Before we start analyzing the data, we transform the effect sizes
+from correlation coefficients <span class="math inline">\(\rho\)</span>
+to Fisher’s <em>z</em>. Correlation coefficients are not well suited for
+meta-analysis because (1) they are bounded to a range (-1, 1) with
+non-linear increases near the boundaries and (2) the standard error of
+the correlation coefficients is related to the effect size. Fisher’s
+<em>z</em> transformation mitigates both issues. It unwinds the (-1, 1)
+range to (<span class="math inline">\(-\infty\)</span>, <span class="math inline">\(\infty\)</span>), makes the sampling distribution
+approximately normal, and breaks the dependency between standard errors
+and effect sizes.</p>
+<p>To apply the transformation, we use the <code>combine_data()</code>
+function from the <code>RoBMA</code> package. We pass the correlation
+coefficients into the <code>r</code> argument, the sample sizes to the
+<code>n</code> argument and set the <code>transformation</code> argument
+to <code>&quot;fishers_z&quot;</code> (the <code>study_names</code> argument is
+optional). The function <code>combine_data()</code> then saves the
+transformed effect size estimates into a data frame called
+<code>dfz</code>, where the <code>y</code> column corresponds to
+Fisher’s <em>z</em> transformation of the correlation coefficient and
+<code>se</code> column corresponds to the standard error of Fisher’s
+<em>z</em>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dfz <span class="ot">&lt;-</span> <span class="fu">combine_data</span>(<span class="at">r =</span> df<span class="sc">$</span>r, <span class="at">n =</span> df<span class="sc">$</span>n, <span class="at">study_names =</span> df<span class="sc">$</span>study, <span class="at">transformation =</span> <span class="st">&quot;fishers_z&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dfz)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           y         se             study_names study_ids weight</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 0.2131713 0.09449112 Ahn, Kim, &amp; Park (2008)        NA     NA</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 0.2985663 0.05976143   Basanez et al. (2013)        NA     NA</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 0.2236561 0.11396058         Bounkeua (2007)        NA     NA</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 0.2661084 0.09712859        Hajizadeh (2009)        NA     NA</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 0.2341895 0.13130643            Hamid (2007)        NA     NA</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 0.6041556 0.09805807    Hwang &amp; Wood (2009a)        NA     NA</span></span></code></pre></div>
+<p>We can also transform the effect sizes according to Cohen’s
+<em>d</em> transformation (which we utilize later to fit the selection
+models).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dfd <span class="ot">&lt;-</span> <span class="fu">combine_data</span>(<span class="at">r =</span> df<span class="sc">$</span>r, <span class="at">n =</span> df<span class="sc">$</span>n, <span class="at">study_names =</span> df<span class="sc">$</span>study, <span class="at">transformation =</span> <span class="st">&quot;cohens_d&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dfd)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           y        se             study_names study_ids weight</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 0.4295790 0.1886397 Ahn, Kim, &amp; Park (2008)        NA     NA</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 0.6060437 0.1215862   Basanez et al. (2013)        NA     NA</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 0.4510508 0.2264322         Bounkeua (2007)        NA     NA</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 0.5385205 0.1950065        Hajizadeh (2009)        NA     NA</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 0.4726720 0.2596249            Hamid (2007)        NA     NA</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 1.2831708 0.2123140    Hwang &amp; Wood (2009a)        NA     NA</span></span></code></pre></div>
+</div>
+<div id="re-analysis-with-random-effect-meta-analysis" class="section level4">
+<h4>Re analysis with random effect meta-analysis</h4>
+<p>We now estimate a random effect meta-analysis with the
+<code>rma()</code> function imported from the <code>metafor</code>
+package <span class="citation">(Wolfgang, 2010)</span> and verify that
+we arrive at the same results as reported in the <span class="citation">Lui (2015)</span> paper. The <code>yi</code> argument
+is used to pass the column name containing effect sizes, the
+<code>sei</code> argument is used to pass the column name containing
+standard errors, and the <code>data</code> argument is used to pass the
+data frame containing both variables.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fit_rma <span class="ot">&lt;-</span> <span class="fu">rma</span>(<span class="at">yi =</span> y, <span class="at">sei =</span> se, <span class="at">data =</span> dfz)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fit_rma</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Random-Effects Model (k = 18; tau^2 estimator: REML)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau^2 (estimated amount of total heterogeneity): 0.0229 (SE = 0.0107)</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau (square root of estimated tau^2 value):      0.1513</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; I^2 (total heterogeneity / total variability):   77.79%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; H^2 (total variability / sampling variability):  4.50</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test for Heterogeneity:</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Q(df = 17) = 73.5786, p-val &lt; .0001</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model Results:</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; estimate      se    zval    pval   ci.lb   ci.ub      </span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.2538  0.0419  6.0568  &lt;.0001  0.1717  0.3359  *** </span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span></code></pre></div>
+<p>Indeed, we find that the effect size estimate from the random effect
+meta-analysis corresponds to the one reported in the <span class="citation">Lui (2015)</span>. It is important to remember that we
+used Fisher’s <em>z</em> to estimate the models; therefore, the
+estimated results are on the Fisher’s <em>z</em> scale. To transform the
+effect size estimate to the correlation coefficients, we can use the
+<code>z2r()</code> functionfrom the <code>RoBMA</code> package,</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">z2r</span>(fit_rma<span class="sc">$</span>b)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              [,1]</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; intrcpt 0.2484877</span></span></code></pre></div>
+<p>Transforming the effect size estimate results in the correlation
+coefficient <span class="math inline">\(\rho\)</span> = 0.25.</p>
+</div>
+</div>
+<div id="pet-peese" class="section level3">
+<h3>PET-PEESE</h3>
+<p>The first publication bias adjustment that we perform is PET-PEESE.
+PET-PEESE adjusts for the relationship between effect sizes and standard
+errors. To our knowledge, PET-PEESE is not currently implemented in any
+R-package. However, since PET and PEESE are weighted regressions of
+effect sizes on standard errors (PET) or standard errors squared
+(PEESE), we can estimate both PET and PEESE models with the
+<code>lm()</code> function. Inside of the <code>lm()</code> function
+call, we specify that <code>y</code> is the response variable (left hand
+side of the <code>~</code> sign) and <code>se</code> is the predictor
+(the right-hand side). Furthermore, we specify the <code>weight</code>
+argument that allows us to weight the meta-regression by inverse
+variance and set the <code>data = dfz</code> argument, which specifies
+that all of the variables come from the transformed, <code>dfz</code>,
+data set.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fit_PET <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> se, <span class="at">weights =</span> <span class="dv">1</span><span class="sc">/</span>se<span class="sc">^</span><span class="dv">2</span>, <span class="at">data =</span> dfz)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_PET)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lm(formula = y ~ se, data = dfz, weights = 1/se^2)</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Weighted Residuals:</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -3.8132 -0.9112 -0.0139  0.5166  3.3151 </span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Estimate Std. Error t value Pr(&gt;|t|)  </span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept) -0.0008722  0.1081247  -0.008   0.9937  </span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; se           2.8549650  1.3593450   2.100   0.0519 .</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Residual standard error: 1.899 on 16 degrees of freedom</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Multiple R-squared:  0.2161, Adjusted R-squared:  0.1671 </span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; F-statistic: 4.411 on 1 and 16 DF,  p-value: 0.05192</span></span></code></pre></div>
+<p>The <code>summary()</code> function allows us to explore details of
+the fitted model. The <code>(Intercept)</code> coefficient refers to the
+meta-analytic effect size (corrected for the correlation with standard
+errors). Again, it is important to keep in mind that the effect size
+estimate is on the Fisher’s <em>z</em> scale. We obtain the estimate on
+correlation scale with the <code>z2r()</code> function (we pass the
+estimated effect size using the
+<code>summary(fit_PET)$coefficients[&quot;(Intercept)&quot;, &quot;Estimate&quot;]</code>
+command, which extracts the estimate from the fitted model, it is
+equivalent with simply pasting the value directly
+<code>z2r(-0.0008722083)</code>).</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">z2r</span>(<span class="fu">summary</span>(fit_PET)<span class="sc">$</span>coefficients[<span class="st">&quot;(Intercept)&quot;</span>, <span class="st">&quot;Estimate&quot;</span>])</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -0.000872208</span></span></code></pre></div>
+<p>Since the Fisher’s <em>z</em> transformation is almost linear around
+zero, we obtain an almost identical estimate.</p>
+<p>More importantly, since the test for the effect size with PET was not
+significant at <span class="math inline">\(\alpha = .10\)</span>, we
+interpret the PET model. However, if the test for effect size were
+significant, we would fit and interpret the PEESE model. The PEESE model
+can be fitted in an analogous way, by replacing the predictor of
+standard errors with standard errors squared (we need to wrap the
+<code>se^2</code> predictor in <code>I()</code> that tells R to square
+the predictor prior to fitting the model).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_PEESE <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="fu">I</span>(se<span class="sc">^</span><span class="dv">2</span>), <span class="at">weights =</span> <span class="dv">1</span><span class="sc">/</span>se<span class="sc">^</span><span class="dv">2</span>, <span class="at">data =</span> dfz)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_PEESE)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lm(formula = y ~ I(se^2), data = dfz, weights = 1/se^2)</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Weighted Residuals:</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -3.7961 -0.9581 -0.1156  0.6718  3.4608 </span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)  </span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)  0.11498    0.06201   1.854   0.0822 .</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; I(se^2)     15.58064    7.96723   1.956   0.0682 .</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Residual standard error: 1.927 on 16 degrees of freedom</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Multiple R-squared:  0.1929, Adjusted R-squared:  0.1425 </span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; F-statistic: 3.824 on 1 and 16 DF,  p-value: 0.06821</span></span></code></pre></div>
+</div>
+<div id="selection-models" class="section level3">
+<h3>Selection models</h3>
+<p>The second publication bias adjustment that we will perform is
+selection models. Selection models adjust for the different publication
+probabilities in different <em>p</em>-value intervals. Selection models
+are implemented in <code>weightr</code> package
+(<code>weightfunct()</code> function; <span class="citation">Coburn et
+al. (2019)</span>) and newly also in the <code>metafor</code> package
+(<code>selmodel()</code> function; <span class="citation">Wolfgang
+(2010)</span>). First, we use the <code>weightr</code> implementation
+and fit the “4PSM” selection model that specifies three distinct
+<em>p</em>-value intervals: (1) covering the range of significant
+<em>p</em>-values for effect sizes in the expected direction
+(0.00-0.025), (2) covering the range of “marginally” significant
+<em>p</em>-values for effect sizes in the expected direction
+(0.025-0.05), and covering the range of non-significant
+<em>p</em>-values (0.05-1). We use Cohen’s <em>d</em> transformation of
+the correlation coefficients since it is better at maintaining the
+distribution of test statistics. To fit the model, we need to pass the
+effect sizes (<code>dfd$y</code>) into the <code>effect</code> argument
+and variances (<code>dfd$se^2</code>) into the <code>v</code> argument
+(note that we need to pass the vector of values directly since the
+<code>weightfunct()</code> function does not allow us to pass the data
+frame directly as did the previous functions). We further set
+<code>steps = c(0.025, 0.05)</code> to specify the appropriate
+cut-points (note that the steps correspond to one-sided
+<em>p</em>-values), and we set <code>table = TRUE</code> to obtain the
+frequency of <em>p</em> values in each of the specified intervals.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit_4PSM <span class="ot">&lt;-</span> <span class="fu">weightfunct</span>(<span class="at">effect =</span> dfd<span class="sc">$</span>y, <span class="at">v =</span> dfd<span class="sc">$</span>se<span class="sc">^</span><span class="dv">2</span>, <span class="at">steps =</span> <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.05</span>), <span class="at">table =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in weightfunct(effect = dfd$y, v = dfd$se^2, steps = c(0.025, 0.05), :</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; At least one of the p-value intervals contains three or fewer effect sizes,</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; which may lead to estimation problems. Consider re-specifying the cutpoints.</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>fit_4PSM</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unadjusted Model (k = 18):</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau^2 (estimated amount of total heterogeneity): 0.0920 (SE = 0.0423)</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau (square root of estimated tau^2 value):  0.3034</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test for Heterogeneity:</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Q(df = 17) = 75.4999, p-val = 5.188348e-09</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model Results:</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           estimate std.error z-stat      p-val ci.lb  ci.ub</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept    0.516   0.08473   6.09 1.1283e-09  0.35 0.6821</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adjusted Model (k = 18):</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau^2 (estimated amount of total heterogeneity): 0.1289 (SE = 0.0682)</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau (square root of estimated tau^2 value):  0.3590</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test for Heterogeneity:</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Q(df = 17) = 75.4999, p-val = 5.188348e-09</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model Results:</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  estimate std.error z-stat   p-val   ci.lb  ci.ub</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept          0.2675    0.2009 1.3311 0.18316 -0.1264 0.6613</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.025 &lt; p &lt; 0.05   0.5008    0.5449 0.9191 0.35803 -0.5671 1.5688</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.05 &lt; p &lt; 1       0.1535    0.1570 0.9777 0.32821 -0.1542 0.4611</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood Ratio Test:</span></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; X^2(df = 2) = 3.844252, p-val = 0.1463</span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Number of Effect Sizes per Interval:</span></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                         Frequency</span></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-values &lt;0.025                14</span></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.025 &lt; p-values &lt; 0.05         1</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.05 &lt; p-values &lt; 1             3</span></span></code></pre></div>
+<p>Note the warning message informing us about the fact that our data do
+not contain sufficient number of <em>p</em>-values in one of the
+<em>p</em>-value intervals. The model output obtained by printing the
+fitted model object <code>fit_4PSM</code> shows that there is only one
+<em>p</em>-value in the (0.025, 0.05) interval. We can deal with this
+issue by joining the “marginally” significant and non-significant
+<em>p</em>-value interval, resulting in the “3PSM” model.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fit_3PSM <span class="ot">&lt;-</span> <span class="fu">weightfunct</span>(<span class="at">effect =</span> dfd<span class="sc">$</span>y, <span class="at">v =</span> dfd<span class="sc">$</span>se<span class="sc">^</span><span class="dv">2</span>, <span class="at">steps =</span> <span class="fu">c</span>(<span class="fl">0.025</span>), <span class="at">table =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>fit_3PSM</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unadjusted Model (k = 18):</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau^2 (estimated amount of total heterogeneity): 0.0920 (SE = 0.0423)</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau (square root of estimated tau^2 value):  0.3034</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test for Heterogeneity:</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Q(df = 17) = 75.4999, p-val = 5.188348e-09</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model Results:</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           estimate std.error z-stat      p-val ci.lb  ci.ub</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept    0.516   0.08473   6.09 1.1283e-09  0.35 0.6821</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adjusted Model (k = 18):</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau^2 (estimated amount of total heterogeneity): 0.1148 (SE = 0.0577)</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau (square root of estimated tau^2 value):  0.3388</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test for Heterogeneity:</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Q(df = 17) = 75.4999, p-val = 5.188348e-09</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model Results:</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               estimate std.error z-stat    p-val     ci.lb  ci.ub</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept       0.3220    0.1676  1.921 0.054698 -0.006484 0.6504</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.025 &lt; p &lt; 1   0.2275    0.2004  1.135 0.256293 -0.165324 0.6204</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood Ratio Test:</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; X^2(df = 1) = 3.107176, p-val = 0.077948</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Number of Effect Sizes per Interval:</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                      Frequency</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-values &lt;0.025             14</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.025 &lt; p-values &lt; 1         4</span></span></code></pre></div>
+<p>The new model does not suffer from the estimation problem due to the
+limited number of <em>p</em>-values in the intervals, so we can now
+interpreting the results with more confidence. First, we check the test
+for heterogeneity that clearly rejects the null hypothesis
+<code>Q(df = 17) = 75.4999, $p$ = 5.188348e-09</code> (if we did not
+find evidence for heterogeneity, we could have proceeded by fitting the
+fixed effects version of the model by specifying the
+<code>fe = TRUE</code> argument). We follow by checking the test for
+publication bias which is a likelihood ratio test comparing the
+unadjusted and adjusted estimate
+<code>X^2(df = 1) = 3.107176, $p$ = 0.077948</code>. The result of the
+test is slightly ambiguous – we would reject the null hypothesis of no
+publication bias with <span class="math inline">\(\alpha = 0.10\)</span>
+but not with <span class="math inline">\(\alpha = 0.05\)</span>.</p>
+<p>If we decide to interpret the estimate effect size, we have to again
+transform it back to the correlation scale. However, this time we need
+to use the <code>d2r()</code> function since we supplied the effect
+sizes as Cohen’s <em>d</em> (note that the effect size estimate
+corresponds to the second value in the <code>fit_3PSM$adj_est</code>
+object for the random effect model, alternatively, we could simply use
+<code>d2r(0.3219641)</code>).</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">d2r</span>(fit_3PSM<span class="sc">$</span>adj_est[<span class="dv">2</span>])</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.1589358</span></span></code></pre></div>
+<p>Alternatively, we could have conducted the analysis analogously but
+with the <code>metafor</code> package. First, we would fit a random
+effect meta-analysis with the Cohen’s <em>d</em> transformed effect
+sizes.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fit_rma_d <span class="ot">&lt;-</span> <span class="fu">rma</span>(<span class="at">yi =</span> y, <span class="at">sei =</span> se, <span class="at">data =</span> dfd)</span></code></pre></div>
+<p>Subsequently, we would have used the <code>selmodel</code> function,
+passing the estimated random effect meta-analysis object and specifying
+the <code>type = &quot;stepfun&quot;</code>argument to obtain a step weight
+function and setting the appropriate steps with the
+<code>steps = c(0.025)</code> argument.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fit_sel_d <span class="ot">&lt;-</span> <span class="fu">selmodel</span>(fit_rma_d, <span class="at">type =</span> <span class="st">&quot;stepfun&quot;</span>, <span class="at">steps =</span> <span class="fu">c</span>(<span class="fl">0.025</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fit_sel_d</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Random-Effects Model (k = 18; tau^2 estimator: ML)</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau^2 (estimated amount of total heterogeneity): 0.1148 (SE = 0.0577)</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau (square root of estimated tau^2 value):      0.3388</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test for Heterogeneity:</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; LRT(df = 1) = 32.7499, p-val &lt; .0001</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model Results:</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; estimate      se    zval    pval    ci.lb   ci.ub    </span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.3220  0.1676  1.9213  0.0547  -0.0065  0.6504  . </span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test for Selection Model Parameters:</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; LRT(df = 1) = 3.1072, p-val = 0.0779</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Selection Model Results:</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                      k  estimate      se     zval    pval   ci.lb   ci.ub      </span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0     &lt; p &lt;= 0.025  14    1.0000     ---      ---     ---     ---     ---      </span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.025 &lt; p &lt;= 1       4    0.2276  0.2005  -3.8534  0.0001  0.0000  0.6204  *** </span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span></code></pre></div>
+<p>The output verifies the results obtained in the previous
+analysis.</p>
+</div>
+<div id="robust-bayesian-meta-analysis" class="section level3">
+<h3>Robust Bayesian meta-analysis</h3>
+<p>The third and final publication bias adjustment that we will perform
+is robust Bayesian meta-analysis (RoBMA). RoBMA uses Bayesian
+model-averaging to combine inference from both PET-PEESE and selection
+models. We use the <code>RoBMA</code> R package (and the
+<code>RoBMA()</code> function; <span class="citation">Bartoš &amp; Maier
+(2020)</span>) to fit the default 36 model ensemble (called RoBMA-PSMA)
+based on an orthogonal combination of models assuming the presence and
+absence of the effect size, heterogeneity, and publication bias. The
+models assuming the presence of publication bias are further split into
+six weight function models and models utilizing the PET and PEESE
+publication bias adjustment. To fit the model, we can directly pass the
+original correlation coefficients into the <code>r</code> argument and
+sample sizes into <code>n</code> argument – the <code>RoBMA()</code>
+function will internally transform them to the Fisher’s <em>z</em> scale
+and, by default, return the estimates on a Cohen’s <em>d</em> scale
+which is used to specify the prior distributions (both of these settings
+can be changed with the <code>prior_scale</code> and
+<code>transformation</code> arguments, and the output can be
+conveniently transformed later). We further set the <code>model</code>
+argument to <code>&quot;PSMA&quot;</code> to fit the 36 model ensemble and use the
+<code>seed</code> argument to make the analysis reproducible (it uses
+MCMC sampling in contrast to the previous methods). We turn on parallel
+estimation by setting <code>parallel = TRUE</code> argument (the
+parallel processing might in some cases fail, try rerunning the model
+one more time or turning the parallel processing off in that case).</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fit_RoBMA <span class="ot">&lt;-</span> <span class="fu">RoBMA</span>(<span class="at">r =</span> df<span class="sc">$</span>r, <span class="at">n =</span> df<span class="sc">$</span>n, <span class="at">seed =</span> <span class="dv">1</span>, <span class="at">model =</span> <span class="st">&quot;PSMA&quot;</span>, <span class="at">parallel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>This step can take some time depending on your CPU. For example, this
+will take around ~ 1 minute on a fast CPU (e.g., AMD Ryzen 3900x
+12c/24t) and up to ten minutes or longer on slower CPUs (e.g., 2.7 GHz
+Intel Core i5).</p>
+<p>We use the <code>summary()</code> function to explore details of the
+fitted model.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_RoBMA)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; RoBMA(r = df$r, n = df$n, model_type = &quot;PSMA&quot;, parallel = TRUE, </span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     save = &quot;min&quot;, seed = 1)</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Models Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Effect         18/36       0.500       0.552        1.232</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Heterogeneity  18/36       0.500       1.000    19168.311</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bias           32/36       0.500       0.845        5.436</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                    Mean Median  0.025  0.975</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu                0.195  0.087 -0.008  0.598</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau               0.330  0.307  0.166  0.597</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0,0.025]    1.000  1.000  1.000  1.000</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.025,0.05] 0.936  1.000  0.438  1.000</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.05,0.5]   0.740  1.000  0.065  1.000</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.5,0.95]   0.697  1.000  0.028  1.000</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.95,0.975] 0.704  1.000  0.028  1.000</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.975,1]    0.713  1.000  0.028  1.000</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PET               0.828  0.000  0.000  3.291</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PEESE             0.802  0.000  0.000 10.805</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Estimated publication weights omega correspond to one-sided p-values.)</span></span></code></pre></div>
+<p>The printed output consists of two parts. The first table called
+<code>Components summary</code> contains information about the fitted
+models. It tells us that we estimated the ensemble with 18/36 models
+assuming the presence of an effect, 18/36 models assuming the presence
+of heterogeneity, and 32/36 models assuming the presence of the
+publication bias. The second column summarizes the prior model
+probabilities of models assuming either presence of the individual
+components – here, we see that the presence and absence of the
+components is balanced a priori. The third column contains information
+about the posterior probability of models assuming the presence of the
+components – we can observe that the posterior model probabilities of
+models assuming the presence of an effect slightly increased to 0.552.
+The last column contains information about the evidence in favor of the
+presence of any of those components. Evidence for the presence of an
+effect is undecided; the models assuming the presence of an effect are
+only 1.232 times more likely given the data than the models assuming the
+absence of an effect. However, we find overwhelming evidence in the
+favor of heterogeneity, with the models assuming the presence of
+heterogeneity being 19,168 times more likely given the data than models
+assuming the absence of heterogeneity, and moderate evidence in favor of
+publication bias.</p>
+<p>As the name indicates, the second table called
+<code>Model-averaged estimates</code> contains information about the
+model-averaged estimates. The first row labeled <code>mu</code>
+corresponds to the model-averaged effect size estimate (on Cohen’s
+<em>d</em> scale) and the second row label <code>tau</code> corresponds
+to the model-averaged heterogeneity estimates. Below are the estimated
+model-averaged weights for the different <em>p</em>-value intervals and
+the PET and PEESE regression coefficients. We convert the estimates to
+the correlation coefficients by adding the
+<code>output_scale = &quot;r&quot;</code> argument to the summary function.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_RoBMA, <span class="at">output_scale =</span> <span class="st">&quot;r&quot;</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; RoBMA(r = df$r, n = df$n, model_type = &quot;PSMA&quot;, parallel = TRUE, </span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     save = &quot;min&quot;, seed = 1)</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Models Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Effect         18/36       0.500       0.552        1.232</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Heterogeneity  18/36       0.500       1.000    19168.311</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bias           32/36       0.500       0.845        5.436</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                    Mean Median  0.025  0.975</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mu                0.095  0.043 -0.004  0.286</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; tau               0.165  0.154  0.083  0.299</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0,0.025]    1.000  1.000  1.000  1.000</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.025,0.05] 0.936  1.000  0.438  1.000</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.05,0.5]   0.740  1.000  0.065  1.000</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.5,0.95]   0.697  1.000  0.028  1.000</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.95,0.975] 0.704  1.000  0.028  1.000</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; omega[0.975,1]    0.713  1.000  0.028  1.000</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PET               0.828  0.000  0.000  3.291</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; PEESE             1.603  0.000  0.000 21.610</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the correlation scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Estimated publication weights omega correspond to one-sided p-values.)</span></span></code></pre></div>
+<p>Now, we obtained the model-averaged effect size estimate on the
+correlation scale. If we were interested in the estimates
+model-averaging only across the models assuming the presence of an
+effect (for the effect size estimate), heterogeneity (for the
+heterogeneity estimate), and publication bias (for the publication bias
+weights and PET and PEESE regression coefficients), we could have added
+<code>conditional = TRUE</code> argument to the summary function. A
+quick textual summary of the model can also be generated with the
+<code>interpret()</code> function.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interpret</span>(fit_RoBMA, <span class="at">output_scale =</span> <span class="st">&quot;r&quot;</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Robust Bayesian meta-analysis found weak evidence in favor of the effect, BF_10 = 1.23, with mean model-averaged estimate correlation = 0.095, 95% CI [-0.004,  0.286]. Robust Bayesian meta-analysis found strong evidence in favor of the heterogeneity, BF^rf = 19168.31, with mean model-averaged estimate tau = 0.165, 95% CI [0.083, 0.299]. Robust Bayesian meta-analysis found moderate evidence in favor of the publication bias, BF_pb = 5.44.&quot;</span></span></code></pre></div>
+<p>We can also obtain summary information about the individual models by
+specifying the <code>type = &quot;models&quot;</code> option. The resulting table
+shows the prior and posterior model probabilities and inclusion Bayes
+factors for the individual models (we also set
+<code>short_name = TRUE</code> argument reducing the width of the output
+by abbreviating names of the prior distributions).</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_RoBMA, <span class="at">type =</span> <span class="st">&quot;models&quot;</span>, <span class="at">short_name =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; RoBMA(r = df$r, n = df$n, model_type = &quot;PSMA&quot;, parallel = TRUE, </span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     save = &quot;min&quot;, seed = 1)</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Models overview:</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Model Prior Effect Prior Heterogeneity</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      1         S(0)                S(0)</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      2         S(0)                S(0)</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      3         S(0)                S(0)</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      4         S(0)                S(0)</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      5         S(0)                S(0)</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      6         S(0)                S(0)</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      7         S(0)                S(0)</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      8         S(0)                S(0)</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      9         S(0)                S(0)</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     10         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     11         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     12         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     13         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     14         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     15         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     16         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     17         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     18         S(0)         Ig(1, 0.15)</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     19      N(0, 1)                S(0)</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     20      N(0, 1)                S(0)</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     21      N(0, 1)                S(0)</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     22      N(0, 1)                S(0)</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     23      N(0, 1)                S(0)</span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     24      N(0, 1)                S(0)</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     25      N(0, 1)                S(0)</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     26      N(0, 1)                S(0)</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     27      N(0, 1)                S(0)</span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     28      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     29      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     30      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     31      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     32      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     33      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     34      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     35      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     36      N(0, 1)         Ig(1, 0.15)</span></span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   Prior Bias                 Prior prob. log(marglik)</span></span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    0.125       -74.67</span></span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[2s: .05] ~ CumD(1, 1)             0.010       -49.60</span></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[2s: .1, .05] ~ CumD(1, 1, 1)          0.010       -47.53</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[1s: .05] ~ CumD(1, 1)             0.010       -41.70</span></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[1s: .05, .025] ~ CumD(1, 1, 1)          0.010       -38.03</span></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[1s: .5, .05] ~ CumD(1, 1, 1)          0.010       -44.41</span></span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[1s: .5, .05, .025] ~ CumD(1, 1, 1, 1)       0.010       -40.79</span></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       PET ~ C(0, 1)[0, Inf]        0.031        -5.01</span></span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     PEESE ~ C(0, 5)[0, Inf]        0.031       -12.17</span></span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    0.125        -6.95</span></span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[2s: .05] ~ CumD(1, 1)             0.010        -5.96</span></span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[2s: .1, .05] ~ CumD(1, 1, 1)          0.010        -5.09</span></span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[1s: .05] ~ CumD(1, 1)             0.010         2.72</span></span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[1s: .05, .025] ~ CumD(1, 1, 1)          0.010         2.93</span></span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[1s: .5, .05] ~ CumD(1, 1, 1)          0.010         2.91</span></span>
+<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[1s: .5, .05, .025] ~ CumD(1, 1, 1, 1)       0.010         3.30</span></span>
+<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       PET ~ C(0, 1)[0, Inf]        0.031         3.62</span></span>
+<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     PEESE ~ C(0, 5)[0, Inf]        0.031         1.62</span></span>
+<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    0.125       -13.17</span></span>
+<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[2s: .05] ~ CumD(1, 1)             0.010       -13.10</span></span>
+<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[2s: .1, .05] ~ CumD(1, 1, 1)          0.010       -12.87</span></span>
+<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[1s: .05] ~ CumD(1, 1)             0.010       -12.75</span></span>
+<span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[1s: .05, .025] ~ CumD(1, 1, 1)          0.010       -12.86</span></span>
+<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[1s: .5, .05] ~ CumD(1, 1, 1)          0.010       -13.29</span></span>
+<span id="cb22-70"><a href="#cb22-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[1s: .5, .05, .025] ~ CumD(1, 1, 1, 1)       0.010       -13.25</span></span>
+<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       PET ~ C(0, 1)[0, Inf]        0.031        -7.07</span></span>
+<span id="cb22-72"><a href="#cb22-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     PEESE ~ C(0, 5)[0, Inf]        0.031        -7.58</span></span>
+<span id="cb22-73"><a href="#cb22-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    0.125         1.79</span></span>
+<span id="cb22-74"><a href="#cb22-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[2s: .05] ~ CumD(1, 1)             0.010         1.75</span></span>
+<span id="cb22-75"><a href="#cb22-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[2s: .1, .05] ~ CumD(1, 1, 1)          0.010         2.16</span></span>
+<span id="cb22-76"><a href="#cb22-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[1s: .05] ~ CumD(1, 1)             0.010         3.11</span></span>
+<span id="cb22-77"><a href="#cb22-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[1s: .05, .025] ~ CumD(1, 1, 1)          0.010         3.01</span></span>
+<span id="cb22-78"><a href="#cb22-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[1s: .5, .05] ~ CumD(1, 1, 1)          0.010         2.98</span></span>
+<span id="cb22-79"><a href="#cb22-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[1s: .5, .05, .025] ~ CumD(1, 1, 1, 1)       0.010         3.06</span></span>
+<span id="cb22-80"><a href="#cb22-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       PET ~ C(0, 1)[0, Inf]        0.031         2.75</span></span>
+<span id="cb22-81"><a href="#cb22-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     PEESE ~ C(0, 5)[0, Inf]        0.031         2.55</span></span>
+<span id="cb22-82"><a href="#cb22-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Post. prob. Inclusion BF</span></span>
+<span id="cb22-83"><a href="#cb22-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-84"><a href="#cb22-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-85"><a href="#cb22-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-86"><a href="#cb22-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-87"><a href="#cb22-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-88"><a href="#cb22-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-89"><a href="#cb22-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-90"><a href="#cb22-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.001</span></span>
+<span id="cb22-91"><a href="#cb22-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-92"><a href="#cb22-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-93"><a href="#cb22-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.001</span></span>
+<span id="cb22-94"><a href="#cb22-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.001</span></span>
+<span id="cb22-95"><a href="#cb22-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.033        3.231</span></span>
+<span id="cb22-96"><a href="#cb22-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.041        4.025</span></span>
+<span id="cb22-97"><a href="#cb22-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.040        3.919</span></span>
+<span id="cb22-98"><a href="#cb22-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.059        5.927</span></span>
+<span id="cb22-99"><a href="#cb22-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.243        9.957</span></span>
+<span id="cb22-100"><a href="#cb22-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.033        1.055</span></span>
+<span id="cb22-101"><a href="#cb22-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-102"><a href="#cb22-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-103"><a href="#cb22-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-104"><a href="#cb22-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-105"><a href="#cb22-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-106"><a href="#cb22-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-107"><a href="#cb22-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-108"><a href="#cb22-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-109"><a href="#cb22-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.000        0.000</span></span>
+<span id="cb22-110"><a href="#cb22-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.155        1.287</span></span>
+<span id="cb22-111"><a href="#cb22-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.012        1.201</span></span>
+<span id="cb22-112"><a href="#cb22-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.019        1.822</span></span>
+<span id="cb22-113"><a href="#cb22-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.048        4.831</span></span>
+<span id="cb22-114"><a href="#cb22-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.044        4.347</span></span>
+<span id="cb22-115"><a href="#cb22-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.043        4.223</span></span>
+<span id="cb22-116"><a href="#cb22-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.046        4.617</span></span>
+<span id="cb22-117"><a href="#cb22-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.102        3.504</span></span>
+<span id="cb22-118"><a href="#cb22-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        0.083        2.797</span></span></code></pre></div>
+<p>To obtain a summary of the individual model diagnostics we set
+<code>type = &quot;diagnostics&quot;</code>. The resulting table provides
+information about the maximum MCMC error, relative MCMC error, minimum
+ESS, and maximum R-hat when aggregating over the parameters of each
+model. As we can see, we obtain acceptable ESS and R-hat diagnostic
+values.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_RoBMA, <span class="at">type =</span> <span class="st">&quot;diagnostics&quot;</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; RoBMA(r = df$r, n = df$n, model_type = &quot;PSMA&quot;, parallel = TRUE, </span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     save = &quot;min&quot;, seed = 1)</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Diagnostics overview:</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Model Prior Effect Prior Heterogeneity</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      1     Spike(0)            Spike(0)</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      2     Spike(0)            Spike(0)</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      3     Spike(0)            Spike(0)</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      4     Spike(0)            Spike(0)</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      5     Spike(0)            Spike(0)</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      6     Spike(0)            Spike(0)</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      7     Spike(0)            Spike(0)</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      8     Spike(0)            Spike(0)</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      9     Spike(0)            Spike(0)</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     10     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     11     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     12     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     13     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     14     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     15     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     16     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     17     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     18     Spike(0)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     19 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     20 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     21 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     22 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     23 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     24 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     25 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     26 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     27 Normal(0, 1)            Spike(0)</span></span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     28 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     29 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     30 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     31 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     32 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     33 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     34 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     35 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     36 Normal(0, 1)   InvGamma(1, 0.15)</span></span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                          Prior Bias                         max[error(MCMC)]</span></span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                           NA</span></span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[two-sided: .05] ~ CumDirichlet(1, 1)                0.00024</span></span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[two-sided: .1, .05] ~ CumDirichlet(1, 1, 1)             0.00295</span></span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[one-sided: .05] ~ CumDirichlet(1, 1)                0.00014</span></span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[one-sided: .05, .025] ~ CumDirichlet(1, 1, 1)             0.00326</span></span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[one-sided: .5, .05] ~ CumDirichlet(1, 1, 1)             0.00033</span></span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[one-sided: .5, .05, .025] ~ CumDirichlet(1, 1, 1, 1)          0.00309</span></span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              PET ~ Cauchy(0, 1)[0, Inf]              0.00236</span></span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            PEESE ~ Cauchy(0, 5)[0, Inf]              0.01223</span></span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                      0.00118</span></span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[two-sided: .05] ~ CumDirichlet(1, 1)                0.00296</span></span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[two-sided: .1, .05] ~ CumDirichlet(1, 1, 1)             0.00295</span></span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[one-sided: .05] ~ CumDirichlet(1, 1)                0.00110</span></span>
+<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[one-sided: .05, .025] ~ CumDirichlet(1, 1, 1)             0.00331</span></span>
+<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[one-sided: .5, .05] ~ CumDirichlet(1, 1, 1)             0.00357</span></span>
+<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[one-sided: .5, .05, .025] ~ CumDirichlet(1, 1, 1, 1)          0.00307</span></span>
+<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              PET ~ Cauchy(0, 1)[0, Inf]              0.00454</span></span>
+<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            PEESE ~ Cauchy(0, 5)[0, Inf]              0.02470</span></span>
+<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                      0.00038</span></span>
+<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[two-sided: .05] ~ CumDirichlet(1, 1)                0.00303</span></span>
+<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[two-sided: .1, .05] ~ CumDirichlet(1, 1, 1)             0.00290</span></span>
+<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[one-sided: .05] ~ CumDirichlet(1, 1)                0.00309</span></span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[one-sided: .05, .025] ~ CumDirichlet(1, 1, 1)             0.00278</span></span>
+<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[one-sided: .5, .05] ~ CumDirichlet(1, 1, 1)             0.00332</span></span>
+<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[one-sided: .5, .05, .025] ~ CumDirichlet(1, 1, 1, 1)          0.00293</span></span>
+<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              PET ~ Cauchy(0, 1)[0, Inf]              0.03247</span></span>
+<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            PEESE ~ Cauchy(0, 5)[0, Inf]              0.05228</span></span>
+<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                      0.00090</span></span>
+<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[two-sided: .05] ~ CumDirichlet(1, 1)                0.00308</span></span>
+<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[two-sided: .1, .05] ~ CumDirichlet(1, 1, 1)             0.00293</span></span>
+<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[one-sided: .05] ~ CumDirichlet(1, 1)                0.00477</span></span>
+<span id="cb23-77"><a href="#cb23-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[one-sided: .05, .025] ~ CumDirichlet(1, 1, 1)             0.00340</span></span>
+<span id="cb23-78"><a href="#cb23-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[one-sided: .5, .05] ~ CumDirichlet(1, 1, 1)             0.00543</span></span>
+<span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[one-sided: .5, .05, .025] ~ CumDirichlet(1, 1, 1, 1)          0.00499</span></span>
+<span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              PET ~ Cauchy(0, 1)[0, Inf]              0.04070</span></span>
+<span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            PEESE ~ Cauchy(0, 5)[0, Inf]              0.07238</span></span>
+<span id="cb23-82"><a href="#cb23-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  max[error(MCMC)/SD] min(ESS) max(R-hat)</span></span>
+<span id="cb23-83"><a href="#cb23-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   NA       NA         NA</span></span>
+<span id="cb23-84"><a href="#cb23-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.016     4158      1.000</span></span>
+<span id="cb23-85"><a href="#cb23-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.016     3793      1.000</span></span>
+<span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.015     4622      1.000</span></span>
+<span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.017     3357      1.000</span></span>
+<span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.017     3509      1.001</span></span>
+<span id="cb23-89"><a href="#cb23-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.018     3064      1.001</span></span>
+<span id="cb23-90"><a href="#cb23-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.010     9917      1.001</span></span>
+<span id="cb23-91"><a href="#cb23-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.010     9589      1.000</span></span>
+<span id="cb23-92"><a href="#cb23-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.010     9632      1.001</span></span>
+<span id="cb23-93"><a href="#cb23-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.013     5518      1.002</span></span>
+<span id="cb23-94"><a href="#cb23-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.015     4565      1.001</span></span>
+<span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.015     4395      1.001</span></span>
+<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.015     4502      1.002</span></span>
+<span id="cb23-97"><a href="#cb23-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.018     3206      1.001</span></span>
+<span id="cb23-98"><a href="#cb23-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.017     3480      1.001</span></span>
+<span id="cb23-99"><a href="#cb23-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.012     7342      1.001</span></span>
+<span id="cb23-100"><a href="#cb23-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.012     7051      1.000</span></span>
+<span id="cb23-101"><a href="#cb23-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.010     9712      1.001</span></span>
+<span id="cb23-102"><a href="#cb23-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.013     5522      1.000</span></span>
+<span id="cb23-103"><a href="#cb23-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.015     4382      1.001</span></span>
+<span id="cb23-104"><a href="#cb23-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.013     5771      1.000</span></span>
+<span id="cb23-105"><a href="#cb23-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.014     4859      1.001</span></span>
+<span id="cb23-106"><a href="#cb23-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.015     4430      1.000</span></span>
+<span id="cb23-107"><a href="#cb23-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.016     4135      1.001</span></span>
+<span id="cb23-108"><a href="#cb23-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.042      565      1.005</span></span>
+<span id="cb23-109"><a href="#cb23-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.024     1678      1.001</span></span>
+<span id="cb23-110"><a href="#cb23-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.011     7736      1.000</span></span>
+<span id="cb23-111"><a href="#cb23-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.014     5254      1.001</span></span>
+<span id="cb23-112"><a href="#cb23-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.016     4103      1.001</span></span>
+<span id="cb23-113"><a href="#cb23-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.021     2240      1.001</span></span>
+<span id="cb23-114"><a href="#cb23-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.020     2527      1.001</span></span>
+<span id="cb23-115"><a href="#cb23-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.026     1529      1.007</span></span>
+<span id="cb23-116"><a href="#cb23-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.024     1756      1.000</span></span>
+<span id="cb23-117"><a href="#cb23-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.038      692      1.001</span></span>
+<span id="cb23-118"><a href="#cb23-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                0.024     1765      1.005</span></span></code></pre></div>
+<p>Finally, we can also plot the model-averaged posterior distribution
+with the <code>plot()</code> function. We set <code>prior = TRUE</code>
+parameter to include the prior distribution as a grey line (and arrow
+for the point density at zero) and <code>output_scale = &quot;r&quot;</code> to
+transform the posterior distribution to the correlation scale (the
+default figure output would be on Cohen’s <em>d</em> scale). (The
+<code>par(mar = c(4, 4, 1, 4))</code> call increases the left margin of
+the figure, so the secondary y-axis text is not cut off.)</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">4</span>))</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_RoBMA, <span class="at">prior =</span> <span class="cn">TRUE</span>, <span class="at">output_scale =</span> <span class="st">&quot;r&quot;</span>, )</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABwgAAASwCAMAAADYPO4xAAADAFBMVEUAAAABAQECAgIDAwMEBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUWFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJycoKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tMTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OUlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7////isF19AAAACXBIWXMAAC4jAAAuIwF4pT92AAAgAElEQVR4nOzdd6AsVZX+/edeLhkFxDgoKioYRxmMbVaGMeeEiglsMOE7ijqmMefU4E8RFBERFTCAoUdRRgF1UEFBZQRbFHQQEURyvrffPl19zulU3dVde++1u/b384fc0121ax1K1nMrbrUBAEiYrAsAAMASQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABIGkEIAEgaQQgASBpBCABwr9WoqaPWaE1crKFhk5f3gSAEADhXX022esHlCEIAQFW0av3RVpuQbTWCEABQPcPhlrtgayQHCUIAwMLLzncuXR1sNSafHW1OjMlAzAsAAFRLN91qvR+ys6TNnEUbfUuaIQgBAE7VBg/zNCHslo4dG0GKmoAgBAC41Bo6BGxOuPI36WgxGIIQAOBSffi6Xy33sK9lc3fMEIIQAOBSbfjumPwLgc0YLhEShAAAl4bPjE46N9qY9rx9EAQhAMCh0dgbjcZl+SdNQyIIAQAOjXk0UHl5l2Xm8mtJre6aIQgBAA41RoMw78Avu1em73WjNkeHBCEAwKH66A0wI7fP9DRH3q9mcucMQQiYOvFznzvRugbApRmCcHQOJpP3rRGEgKVvHdzxLesqgH6nfPvUSf40ZfX6aOqN+airN/VEfenWmlazZnVMSBAChi45uOti6zqAVe8fc5jWb93xk9efIQizGFz5sWl0nZAgBAx9MwvCb1rXAax64JQg1Fsnrz9DELab9YHca9mcHCUIATt/Orhn2skmIJy9pK13nOChU/7vOksQDuteNAz+FAVBCJhZf/RyEB613roWYNn/J/1/Zdaf4WaZUSq8pEMEIWDmVwev+JV1LcAy0yAcs7J/BCFg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" width="50%" style="display: block; margin: auto;" /></p>
+<div id="specifying-different-priors" class="section level4">
+<h4>Specifying Different Priors</h4>
+<p>The <code>RoBMA</code> package allows us to fit ensembles of highly
+customized meta-analytic models. Here we reproduce the ensemble for
+perinull directional hypothesis test from the Appendix (see the R
+package vignettes for more examples and details). Instead of using the
+fully pre-specified model with the <code>model = &quot;PSMA&quot;</code> argument,
+we explicitly specify the prior distribution for models assuming
+presence of the effect with the
+<code>priors_effect = prior(&quot;normal&quot;, parameters = list(mean = 0.60, sd = 0.20), truncation = list(0, Inf))</code>
+argument, which assigns Normal(0.60, 0.20) distribution bounded to the
+positive numbers to the <span class="math inline">\(\mu\)</span>
+parameter (note that the prior distribution is specified on the Cohen’s
+<em>d</em> scale, corresponding to 95% prior probability mass contained
+approximately in the <span class="math inline">\(\rho\)</span> = (0.10,
+0.45) interval). Similarly, we also exchange the default prior
+distribution for the models assuming absence of the effect with a
+perinull hypothesis with the
+<code>priors_effect_null = prior(&quot;normal&quot;, parameters = list(mean = 0, sd = 0.10)))</code>
+argument that sets 95% prior probability mass to values in the <span class="math inline">\(\rho\)</span> = (-0.10, 0.10) interval.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fit_RoBMA2 <span class="ot">&lt;-</span> <span class="fu">RoBMA</span>(<span class="at">r =</span> df<span class="sc">$</span>r, <span class="at">n =</span> df<span class="sc">$</span>n, <span class="at">seed =</span> <span class="dv">2</span>, <span class="at">parallel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">priors_effect      =</span> <span class="fu">prior</span>(<span class="st">&quot;normal&quot;</span>, <span class="at">parameters =</span> <span class="fu">list</span>(<span class="at">mean =</span> <span class="fl">0.60</span>, <span class="at">sd =</span> <span class="fl">0.20</span>), <span class="at">truncation =</span> <span class="fu">list</span>(<span class="dv">0</span>, <span class="cn">Inf</span>)),</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">priors_effect_null =</span> <span class="fu">prior</span>(<span class="st">&quot;normal&quot;</span>, <span class="at">parameters =</span> <span class="fu">list</span>(<span class="at">mean =</span> <span class="dv">0</span>,    <span class="at">sd =</span> <span class="fl">0.10</span>)))</span></code></pre></div>
+<p>As previously, we can use the <code>summary()</code> function to
+inspect the model fit and verify that the specified models correspond to
+the settings.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_RoBMA2, <span class="at">type =</span> <span class="st">&quot;models&quot;</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; RoBMA(r = df$r, n = df$n, priors_effect = prior(&quot;normal&quot;, parameters = list(mean = 0.6, </span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     sd = 0.2), truncation = list(0, Inf)), priors_effect_null = prior(&quot;normal&quot;, </span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     parameters = list(mean = 0, sd = 0.1)), parallel = TRUE, </span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     save = &quot;min&quot;, seed = 2)</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Models overview:</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Model       Prior Effect       Prior Heterogeneity</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      1           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      2           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      3           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      4           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      5           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      6           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      7           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      8           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      9           Normal(0, 0.1)            Spike(0)</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     10           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     11           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     12           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     13           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     14           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     15           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     16           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     17           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     18           Normal(0, 0.1)   InvGamma(1, 0.15)</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     19 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     20 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     21 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     22 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     23 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     24 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     25 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     26 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     27 Normal(0.6, 0.2)[0, Inf]            Spike(0)</span></span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     28 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     29 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     30 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     31 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     32 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     33 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     34 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     35 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     36 Normal(0.6, 0.2)[0, Inf]   InvGamma(1, 0.15)</span></span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                          Prior Bias                         Prior prob.</span></span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                   0.125</span></span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[two-sided: .05] ~ CumDirichlet(1, 1)             0.010</span></span>
+<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[two-sided: .1, .05] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[one-sided: .05] ~ CumDirichlet(1, 1)             0.010</span></span>
+<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[one-sided: .05, .025] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-53"><a href="#cb26-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[one-sided: .5, .05] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-54"><a href="#cb26-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[one-sided: .5, .05, .025] ~ CumDirichlet(1, 1, 1, 1)       0.010</span></span>
+<span id="cb26-55"><a href="#cb26-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              PET ~ Cauchy(0, 1)[0, Inf]           0.031</span></span>
+<span id="cb26-56"><a href="#cb26-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            PEESE ~ Cauchy(0, 5)[0, Inf]           0.031</span></span>
+<span id="cb26-57"><a href="#cb26-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                   0.125</span></span>
+<span id="cb26-58"><a href="#cb26-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[two-sided: .05] ~ CumDirichlet(1, 1)             0.010</span></span>
+<span id="cb26-59"><a href="#cb26-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[two-sided: .1, .05] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-60"><a href="#cb26-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[one-sided: .05] ~ CumDirichlet(1, 1)             0.010</span></span>
+<span id="cb26-61"><a href="#cb26-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[one-sided: .05, .025] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-62"><a href="#cb26-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[one-sided: .5, .05] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-63"><a href="#cb26-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[one-sided: .5, .05, .025] ~ CumDirichlet(1, 1, 1, 1)       0.010</span></span>
+<span id="cb26-64"><a href="#cb26-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              PET ~ Cauchy(0, 1)[0, Inf]           0.031</span></span>
+<span id="cb26-65"><a href="#cb26-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            PEESE ~ Cauchy(0, 5)[0, Inf]           0.031</span></span>
+<span id="cb26-66"><a href="#cb26-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                   0.125</span></span>
+<span id="cb26-67"><a href="#cb26-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[two-sided: .05] ~ CumDirichlet(1, 1)             0.010</span></span>
+<span id="cb26-68"><a href="#cb26-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[two-sided: .1, .05] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-69"><a href="#cb26-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[one-sided: .05] ~ CumDirichlet(1, 1)             0.010</span></span>
+<span id="cb26-70"><a href="#cb26-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[one-sided: .05, .025] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-71"><a href="#cb26-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[one-sided: .5, .05] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-72"><a href="#cb26-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[one-sided: .5, .05, .025] ~ CumDirichlet(1, 1, 1, 1)       0.010</span></span>
+<span id="cb26-73"><a href="#cb26-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              PET ~ Cauchy(0, 1)[0, Inf]           0.031</span></span>
+<span id="cb26-74"><a href="#cb26-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            PEESE ~ Cauchy(0, 5)[0, Inf]           0.031</span></span>
+<span id="cb26-75"><a href="#cb26-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                   0.125</span></span>
+<span id="cb26-76"><a href="#cb26-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[two-sided: .05] ~ CumDirichlet(1, 1)             0.010</span></span>
+<span id="cb26-77"><a href="#cb26-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[two-sided: .1, .05] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-78"><a href="#cb26-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            omega[one-sided: .05] ~ CumDirichlet(1, 1)             0.010</span></span>
+<span id="cb26-79"><a href="#cb26-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      omega[one-sided: .05, .025] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-80"><a href="#cb26-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        omega[one-sided: .5, .05] ~ CumDirichlet(1, 1, 1)          0.010</span></span>
+<span id="cb26-81"><a href="#cb26-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  omega[one-sided: .5, .05, .025] ~ CumDirichlet(1, 1, 1, 1)       0.010</span></span>
+<span id="cb26-82"><a href="#cb26-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                              PET ~ Cauchy(0, 1)[0, Inf]           0.031</span></span>
+<span id="cb26-83"><a href="#cb26-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            PEESE ~ Cauchy(0, 5)[0, Inf]           0.031</span></span>
+<span id="cb26-84"><a href="#cb26-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  log(marglik) Post. prob. Inclusion BF</span></span>
+<span id="cb26-85"><a href="#cb26-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -18.84       0.000        0.000</span></span>
+<span id="cb26-86"><a href="#cb26-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -17.66       0.000        0.000</span></span>
+<span id="cb26-87"><a href="#cb26-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -17.06       0.000        0.000</span></span>
+<span id="cb26-88"><a href="#cb26-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -17.35       0.000        0.000</span></span>
+<span id="cb26-89"><a href="#cb26-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -17.04       0.000        0.000</span></span>
+<span id="cb26-90"><a href="#cb26-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -18.11       0.000        0.000</span></span>
+<span id="cb26-91"><a href="#cb26-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -17.69       0.000        0.000</span></span>
+<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         -5.24       0.000        0.000</span></span>
+<span id="cb26-93"><a href="#cb26-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         -7.61       0.000        0.000</span></span>
+<span id="cb26-94"><a href="#cb26-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         -3.20       0.000        0.003</span></span>
+<span id="cb26-95"><a href="#cb26-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         -1.45       0.000        0.022</span></span>
+<span id="cb26-96"><a href="#cb26-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         -0.42       0.001        0.061</span></span>
+<span id="cb26-97"><a href="#cb26-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.01       0.020        1.939</span></span>
+<span id="cb26-98"><a href="#cb26-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.19       0.024        2.317</span></span>
+<span id="cb26-99"><a href="#cb26-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.09       0.022        2.104</span></span>
+<span id="cb26-100"><a href="#cb26-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.46       0.031        3.062</span></span>
+<span id="cb26-101"><a href="#cb26-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.64       0.112        3.909</span></span>
+<span id="cb26-102"><a href="#cb26-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          2.35       0.031        0.986</span></span>
+<span id="cb26-103"><a href="#cb26-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -11.84       0.000        0.000</span></span>
+<span id="cb26-104"><a href="#cb26-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -11.88       0.000        0.000</span></span>
+<span id="cb26-105"><a href="#cb26-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -11.71       0.000        0.000</span></span>
+<span id="cb26-106"><a href="#cb26-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -11.54       0.000        0.000</span></span>
+<span id="cb26-107"><a href="#cb26-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -11.70       0.000        0.000</span></span>
+<span id="cb26-108"><a href="#cb26-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -12.05       0.000        0.000</span></span>
+<span id="cb26-109"><a href="#cb26-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        -12.07       0.000        0.000</span></span>
+<span id="cb26-110"><a href="#cb26-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         -8.38       0.000        0.000</span></span>
+<span id="cb26-111"><a href="#cb26-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         -7.36       0.000        0.000</span></span>
+<span id="cb26-112"><a href="#cb26-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.35       0.337        3.564</span></span>
+<span id="cb26-113"><a href="#cb26-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.13       0.023        2.190</span></span>
+<span id="cb26-114"><a href="#cb26-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.42       0.030        2.951</span></span>
+<span id="cb26-115"><a href="#cb26-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          4.12       0.061        6.123</span></span>
+<span id="cb26-116"><a href="#cb26-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.85       0.046        4.602</span></span>
+<span id="cb26-117"><a href="#cb26-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.94       0.050        5.027</span></span>
+<span id="cb26-118"><a href="#cb26-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.84       0.046        4.572</span></span>
+<span id="cb26-119"><a href="#cb26-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.23       0.074        2.492</span></span>
+<span id="cb26-120"><a href="#cb26-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          3.44       0.092        3.132</span></span></code></pre></div>
+</div>
+</div>
+<div id="references" class="section level3 unnumbered">
+<h3 class="unnumbered">References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-RoBMA" class="csl-entry">
+Bartoš, F., &amp; Maier, M. (2020). <em><span>RoBMA</span>:
+<span>A</span>n <span>R</span> package for robust <span>B</span>ayesian
+meta-analyses</em>. <a href="https://CRAN.R-project.org/package=RoBMA">https://CRAN.R-project.org/package=RoBMA</a>
+</div>
+<div id="ref-bartos2020adjusting" class="csl-entry">
+Bartoš, F., Maier, Maximilian, Quintana, D. S., &amp; Wagenmakers, E.-J.
+(2022a). Adjusting for publication bias in <span>JASP</span> and
+<span>R</span> — <span>S</span>election models, <span>PET-PEESE</span>,
+and robust <span>B</span>ayesian meta-analysis. <em>Advances in Methods
+and Practices in Psychological Science</em>, <em>5</em>(3), 1–19. <a href="https://doi.org/10.1177/25152459221109259">https://doi.org/10.1177/25152459221109259</a>
+</div>
+<div id="ref-bartos2021no" class="csl-entry">
+Bartoš, F., Maier, M., Wagenmakers, E.-J., Doucouliagos, H., &amp;
+Stanley, T. D. (2022b). Robust <span>B</span>ayesian meta-analysis:
+<span>M</span>odel-averaging across complementary publication bias
+adjustment methods. <em>Research Synthesis Methods</em>. <a href="https://doi.org/10.1002/jrsm.1594">https://doi.org/10.1002/jrsm.1594</a>
+</div>
+<div id="ref-weightr" class="csl-entry">
+Coburn, K. M., Vevea, J. L., &amp; Coburn, M. K. M. (2019). <span class="nocase">weightr</span>: <span>E</span>stimating weight-function
+models for publication bias.
+<em>Https://CRAN.R-Project.org/Package=weightr</em>.
+</div>
+<div id="ref-iyengar1988selection" class="csl-entry">
+Iyengar, S., &amp; Greenhouse, J. B. (1988). Selection models and the
+file drawer problem. <em>Statistical Science</em>, <em>3</em>(1),
+109–117. <a href="https://doi.org/10.1214/ss/1177013012">https://doi.org/10.1214/ss/1177013012</a>
+</div>
+<div id="ref-lui2015intergenerational" class="csl-entry">
+Lui, P. P. (2015). Intergenerational cultural conflict, mental health,
+and educational outcomes among asian and <span>L</span>atino/a
+<span>A</span>mericans: <span>Q</span>ualitative and meta-analytic
+review. <em>Psychological Bulletin</em>, <em>141</em>(2), 404–446. <a href="https://doi.org/10.1037/a0038449">https://doi.org/10.1037/a0038449</a>
+</div>
+<div id="ref-maier2020robust" class="csl-entry">
+Maier, M., Bartoš, F., &amp; Wagenmakers, E.-J. (2022). Robust
+<span>B</span>ayesian meta-analysis: Addressing publication bias with
+model-averaging. <em>Psychological Methods</em>. <a href="https://doi.org/10.1037/met0000405">https://doi.org/10.1037/met0000405</a>
+</div>
+<div id="ref-stanley2017limitations" class="csl-entry">
+Stanley, T. D. (2017). Limitations of <span>PET-PEESE</span> and other
+meta-analysis methods. <em>Social Psychological and Personality
+Science</em>, <em>8</em>(5), 581–591. <a href="https://doi.org/10.1177/1948550617693062">https://doi.org/10.1177/1948550617693062</a>
+</div>
+<div id="ref-stanley2014meta" class="csl-entry">
+Stanley, T. D., &amp; Doucouliagos, H. (2014). Meta-regression
+approximations to reduce publication selection bias. <em>Research
+Synthesis Methods</em>, <em>5</em>(1), 60–78. <a href="https://doi.org/10.1002/jrsm.1095">https://doi.org/10.1002/jrsm.1095</a>
+</div>
+<div id="ref-vevea1995general" class="csl-entry">
+Vevea, J. L., &amp; Hedges, L. V. (1995). A general linear model for
+estimating effect size in the presence of publication bias.
+<em>Psychometrika</em>, <em>60</em>(3), 419–435. <a href="https://doi.org/10.1007/BF02294384">https://doi.org/10.1007/BF02294384</a>
+</div>
+<div id="ref-metafor" class="csl-entry">
+Wolfgang, V. (2010). Conducting meta-analyses in <span>R</span> with the
+<span class="nocase">metafor</span> package. <em>Journal of Statistical
+Software</em>, <em>36</em>(3), 1–48. <a href="https://www.jstatsoft.org/v36/i03/">https://www.jstatsoft.org/v36/i03/</a>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
