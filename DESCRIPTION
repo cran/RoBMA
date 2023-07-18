@@ -1,6 +1,6 @@
 Package: RoBMA
 Title: Robust Bayesian Meta-Analyses
-Version: 3.0.1
+Version: 3.1.0
 Maintainer: František Bartoš <f.bartos96@gmail.com>
 Authors@R: c( 
     person("František", "Bartoš",     role = c("aut", "cre"),
@@ -37,14 +37,14 @@ RoxygenNote: 7.2.3
 SystemRequirements: JAGS >= 4.3.1 (https://mcmc-jags.sourceforge.io/)
 NeedsCompilation: yes
 Depends: R (>= 4.0.0)
-Imports: BayesTools (>= 0.2.14), runjags, rjags, stats, graphics,
+Imports: BayesTools (>= 0.2.16), runjags, rjags, stats, graphics,
         mvtnorm, scales, Rdpack, rlang, ggplot2
-Suggests: parallel, metaBMA, metafor, weightr, fixest, metadat,
+Suggests: parallel, metaBMA, metafor, weightr, lme4, fixest, metadat,
         testthat, vdiffr, knitr, rmarkdown, covr
 LinkingTo: mvtnorm
 RdMacros: Rdpack
 VignetteBuilder: knitr
-Packaged: 2023-06-02 11:15:15 UTC; fbart
+Packaged: 2023-07-17 14:01:51 UTC; fbart
 Author: František Bartoš [aut, cre] (<https://orcid.org/0000-0002-0018-5573>),
   Maximilian Maier [aut] (<https://orcid.org/0000-0002-9873-6096>),
   Eric-Jan Wagenmakers [ths] (<https://orcid.org/0000-0003-1596-1034>),
@@ -54,4 +54,4 @@ Author: František Bartoš [aut, cre] (<https://orcid.org/0000-0002-0018-5573>),
   Martyn Plummer [cph] (Original copyright holder of some modified code
     where indicated.)
 Repository: CRAN
-Date/Publication: 2023-06-02 12:30:02 UTC
+Date/Publication: 2023-07-18 21:40:02 UTC
