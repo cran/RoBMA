@@ -20,20 +20,20 @@ fit_RoBMA  <- readRDS(file = "../models/Tutorial/fit_RoBMA_Lui2015.RDS")
 fit_RoBMA2 <- readRDS(file = "../models/Tutorial/fit_RoBMA_perinull_Lui2015.RDS")
 
 ## ----include = FALSE, eval = FALSE--------------------------------------------
-#  # R package version updating
-#  library(RoBMA)
-#  data("Lui2015", package = "RoBMA")
-#  df <- Lui2015
-#  fit_RoBMA <- RoBMA(r = df$r, n = df$n, seed = 1, model = "PSMA", parallel = TRUE, save = "min")
-#  
-#  fit_RoBMA2 <- RoBMA(r = df$r, n = df$n, seed = 2, parallel = TRUE, save = "min",
-#                      priors_effect      = prior("normal", parameters = list(mean = 0.60, sd = 0.20), truncation = list(0, Inf)),
-#                      priors_effect_null = prior("normal", parameters = list(mean = 0,    sd = 0.10)))
-#  
-#  saveRDS(fit_RoBMA,  file = "../models/Tutorial/fit_RoBMA_Lui2015.RDS")
-#  saveRDS(fit_RoBMA2, file = "../models/Tutorial/fit_RoBMA_perinull_Lui2015.RDS")
+# # R package version updating
+# library(RoBMA)
+# data("Lui2015", package = "RoBMA")
+# df <- Lui2015
+# fit_RoBMA <- RoBMA(r = df$r, n = df$n, seed = 1, model = "PSMA", parallel = TRUE, save = "min")
+# 
+# fit_RoBMA2 <- RoBMA(r = df$r, n = df$n, seed = 2, parallel = TRUE, save = "min",
+#                     priors_effect      = prior("normal", parameters = list(mean = 0.60, sd = 0.20), truncation = list(0, Inf)),
+#                     priors_effect_null = prior("normal", parameters = list(mean = 0,    sd = 0.10)))
+# 
+# saveRDS(fit_RoBMA,  file = "../models/Tutorial/fit_RoBMA_Lui2015.RDS")
+# saveRDS(fit_RoBMA2, file = "../models/Tutorial/fit_RoBMA_perinull_Lui2015.RDS")
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 library("metafor")
 library("weightr")
 library("RoBMA")
@@ -103,7 +103,7 @@ summary(fit_RoBMA, type = "models", short_name = TRUE)
 ## -----------------------------------------------------------------------------
 summary(fit_RoBMA, type = "diagnostics")
 
-## ---- dpi = 300, fig.width = 6, fig.height = 4, out.width = "50%", fig.align = "center"----
+## ----dpi = 300, fig.width = 6, fig.height = 4, out.width = "50%", fig.align = "center"----
 par(mar = c(4, 4, 1, 4))
 plot(fit_RoBMA, prior = TRUE, output_scale = "r", )
 

@@ -20,38 +20,38 @@ fit_BMA           <- readRDS(file = "../models/HierarchicalBMA/fit_BMA.RDS")
 hierarchical_test <- readRDS(file = "../models/HierarchicalBMA/hierarchical_test.RDS")
 
 ## ----include = FALSE, eval = FALSE--------------------------------------------
-#  # R package version updating
-#  library(RoBMA)
-#  
-#  data("dat.konstantopoulos2011", package = "metadat")
-#  dat <- dat.konstantopoulos2011
-#  
-#  fit.0 <- RoBMA(d = dat$yi, v = dat$vi,
-#               priors_effect_null        = NULL,
-#               priors_heterogeneity_null = NULL,
-#               priors_bias               = NULL,
-#               parallel = TRUE, seed = 1)
-#  
-#  fit <- RoBMA(d = dat$yi, v = dat$vi, study_ids = dat$district,
-#               priors_effect_null        = NULL,
-#               priors_heterogeneity_null = NULL,
-#               priors_bias               = NULL,
-#               parallel = TRUE, seed = 1)
-#  
-#  fit_BMA <- RoBMA(d = dat$yi, v = dat$vi, study_ids = dat$district,
-#                   priors_bias = NULL,
-#                   parallel = TRUE, seed = 1)
-#  
-#  hierarchical_test <- RoBMA(d = dat$yi, v = dat$vi, study_ids = dat$district,
-#                             priors_heterogeneity_null = NULL,
-#                             priors_hierarchical_null = prior(distribution = "spike", parameters = list("location" = 0)),
-#                             priors_bias = NULL,
-#                             parallel = TRUE, seed = 1)
-#  
-#  saveRDS(fit.0,             file = "../models/HierarchicalBMA/fit.0.RDS",             compress = "xz")
-#  saveRDS(fit,               file = "../models/HierarchicalBMA/fit.RDS",               compress = "xz")
-#  saveRDS(fit_BMA,           file = "../models/HierarchicalBMA/fit_BMA.RDS",           compress = "xz")
-#  saveRDS(hierarchical_test, file = "../models/HierarchicalBMA/hierarchical_test.RDS", compress = "xz")
+# # R package version updating
+# library(RoBMA)
+# 
+# data("dat.konstantopoulos2011", package = "metadat")
+# dat <- dat.konstantopoulos2011
+# 
+# fit.0 <- RoBMA(d = dat$yi, v = dat$vi,
+#              priors_effect_null        = NULL,
+#              priors_heterogeneity_null = NULL,
+#              priors_bias               = NULL,
+#              parallel = TRUE, seed = 1)
+# 
+# fit <- RoBMA(d = dat$yi, v = dat$vi, study_ids = dat$district,
+#              priors_effect_null        = NULL,
+#              priors_heterogeneity_null = NULL,
+#              priors_bias               = NULL,
+#              parallel = TRUE, seed = 1)
+# 
+# fit_BMA <- RoBMA(d = dat$yi, v = dat$vi, study_ids = dat$district,
+#                  priors_bias = NULL,
+#                  parallel = TRUE, seed = 1)
+# 
+# hierarchical_test <- RoBMA(d = dat$yi, v = dat$vi, study_ids = dat$district,
+#                            priors_heterogeneity_null = NULL,
+#                            priors_hierarchical_null = prior(distribution = "spike", parameters = list("location" = 0)),
+#                            priors_bias = NULL,
+#                            parallel = TRUE, seed = 1)
+# 
+# saveRDS(fit.0,             file = "../models/HierarchicalBMA/fit.0.RDS",             compress = "xz")
+# saveRDS(fit,               file = "../models/HierarchicalBMA/fit.RDS",               compress = "xz")
+# saveRDS(fit_BMA,           file = "../models/HierarchicalBMA/fit_BMA.RDS",           compress = "xz")
+# saveRDS(hierarchical_test, file = "../models/HierarchicalBMA/hierarchical_test.RDS", compress = "xz")
 
 ## -----------------------------------------------------------------------------
 data("dat.konstantopoulos2011", package = "metadat")

@@ -19,31 +19,31 @@ fit_BMAb  <- readRDS(file = "../models/MedicineBMA/fit_BMAb.RDS")
 fit_RoBMA <- readRDS(file = "../models/MedicineBMA/fit_RoBMA.RDS")
 
 ## ----include = FALSE, eval = FALSE--------------------------------------------
-#  # R package version updating
-#  library(RoBMA)
-#  
-#  data("Poulsen2006", package = "RoBMA")
-#  
-#  fit_BMA <- RoBMA(d = Poulsen2006$d, se = Poulsen2006$se, study_names = Poulsen2006$study,
+# # R package version updating
+# library(RoBMA)
+# 
+# data("Poulsen2006", package = "RoBMA")
+# 
+# fit_BMA <- RoBMA(d = Poulsen2006$d, se = Poulsen2006$se, study_names = Poulsen2006$study,
+#                  priors_effect        = prior_informed(name = "oral health", parameter = "effect", type = "smd"),
+#                  priors_heterogeneity = prior_informed(name = "oral health", parameter = "heterogeneity", type = "smd"),
+#                  priors_bias          = NULL,
+#                  transformation = "cohens_d", seed = 1, parallel = TRUE)
+# 
+# fit_BMAb <- RoBMA(d = Poulsen2006$d, se = Poulsen2006$se, study_names = Poulsen2006$study,
 #                   priors_effect        = prior_informed(name = "oral health", parameter = "effect", type = "smd"),
 #                   priors_heterogeneity = prior_informed(name = "oral health", parameter = "heterogeneity", type = "smd"),
 #                   priors_bias          = NULL,
-#                   transformation = "cohens_d", seed = 1, parallel = TRUE)
-#  
-#  fit_BMAb <- RoBMA(d = Poulsen2006$d, se = Poulsen2006$se, study_names = Poulsen2006$study,
+#                   seed = 1, parallel = TRUE)
+# 
+# fit_RoBMA <- RoBMA(d = Poulsen2006$d, se = Poulsen2006$se, study_names = Poulsen2006$study,
 #                    priors_effect        = prior_informed(name = "oral health", parameter = "effect", type = "smd"),
 #                    priors_heterogeneity = prior_informed(name = "oral health", parameter = "heterogeneity", type = "smd"),
-#                    priors_bias          = NULL,
 #                    seed = 1, parallel = TRUE)
-#  
-#  fit_RoBMA <- RoBMA(d = Poulsen2006$d, se = Poulsen2006$se, study_names = Poulsen2006$study,
-#                     priors_effect        = prior_informed(name = "oral health", parameter = "effect", type = "smd"),
-#                     priors_heterogeneity = prior_informed(name = "oral health", parameter = "heterogeneity", type = "smd"),
-#                     seed = 1, parallel = TRUE)
-#  
-#  saveRDS(fit_BMA, file = "../models/MedicineBMA/fit_BMA.RDS")
-#  saveRDS(fit_BMAb, file = "../models/MedicineBMA/fit_BMAb.RDS")
-#  saveRDS(fit_RoBMA, file = "../models/MedicineBMA/fit_RoBMA.RDS")
+# 
+# saveRDS(fit_BMA, file = "../models/MedicineBMA/fit_BMA.RDS")
+# saveRDS(fit_BMAb, file = "../models/MedicineBMA/fit_BMAb.RDS")
+# saveRDS(fit_RoBMA, file = "../models/MedicineBMA/fit_RoBMA.RDS")
 
 ## -----------------------------------------------------------------------------
 library(RoBMA)
