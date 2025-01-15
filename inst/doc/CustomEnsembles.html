@@ -12,7 +12,7 @@
 
 <meta name="author" content="František Bartoš" />
 
-<meta name="date" content="2024-12-11" />
+<meta name="date" content="2025-01-15" />
 
 <title>Fitting Custom Meta-Analytic Ensembles</title>
 
@@ -363,7 +363,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Fitting Custom Meta-Analytic Ensembles</h1>
 <h4 class="author">František Bartoš</h4>
-<h4 class="date">2024-12-11</h4>
+<h4 class="date">2025-01-15</h4>
 
 
 
@@ -400,19 +400,21 @@ by Bem in one of his later replies <span class="citation">(Bem et al.,
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(RoBMA)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; Loading required namespace: runjags</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; Loading required namespace: mvtnorm</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Bem2011&quot;</span>, <span class="at">package =</span> <span class="st">&quot;RoBMA&quot;</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>Bem2011</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt;      d         se                                        study</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; 1 0.25 0.10155048                  Detection of Erotic Stimuli</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; 2 0.20 0.08246211                Avoidance of Negative Stimuli</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; 3 0.26 0.10323629                        Retroactive Priming I</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; 4 0.23 0.10182427                       Retroactive Priming II</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; 5 0.22 0.10120277  Retroactive Habituation I - Negative trials</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; 6 0.15 0.08210765 Retroactive Habituation II - Negative trials</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt; 7 0.09 0.07085372             Retroactive Induction of Boredom</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt; 8 0.19 0.10089846                     Facilitation of Recall I</span></span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt; 9 0.42 0.14752627                    Facilitation of Recall II</span></span></code></pre></div>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; RoBMA version 3.3 now features spike-and-slab style model-averaging via the &#39;algorithm = &quot;ss&quot;&#39; argument.</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; See &#39;vignette(&quot;FastRoBMA&quot;, package = &quot;RoBMA&quot;)&#39; for more details (&#39;algorithm = &quot;ss&quot;&#39; argument will become the default setting in the future major release of the package).</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Bem2011&quot;</span>, <span class="at">package =</span> <span class="st">&quot;RoBMA&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>Bem2011</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt;      d         se                                        study</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; 1 0.25 0.10155048                  Detection of Erotic Stimuli</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; 2 0.20 0.08246211                Avoidance of Negative Stimuli</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; 3 0.26 0.10323629                        Retroactive Priming I</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; 4 0.23 0.10182427                       Retroactive Priming II</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt; 5 0.22 0.10120277  Retroactive Habituation I - Negative trials</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt; 6 0.15 0.08210765 Retroactive Habituation II - Negative trials</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt; 7 0.09 0.07085372             Retroactive Induction of Boredom</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co">#&gt; 8 0.19 0.10089846                     Facilitation of Recall I</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt; 9 0.42 0.14752627                    Facilitation of Recall II</span></span></code></pre></div>
 </div>
 <div id="the-custom-ensemble" class="section level3">
 <h3>The Custom Ensemble</h3>

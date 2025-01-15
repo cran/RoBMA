@@ -15,20 +15,18 @@ NoBMA.reg(
   standardize_predictors = TRUE,
   priors = NULL,
   model_type = NULL,
-  priors_effect = prior(distribution = "normal", parameters = list(mean = 0, sd = 1)),
-  priors_heterogeneity = prior(distribution = "invgamma", parameters = list(shape = 1,
-    scale = 0.15)),
-  priors_effect_null = prior(distribution = "point", parameters = list(location = 0)),
-  priors_heterogeneity_null = prior(distribution = "point", parameters = list(location =
-    0)),
-  priors_hierarchical = prior("beta", parameters = list(alpha = 1, beta = 1)),
-  priors_hierarchical_null = NULL,
-  prior_covariates = prior("normal", parameters = list(mean = 0, sd = 0.25)),
-  prior_covariates_null = prior("spike", parameters = list(location = 0)),
-  prior_factors = prior_factor("mnormal", parameters = list(mean = 0, sd = 0.25),
-    contrast = "meandif"),
-  prior_factors_null = prior_factor("spike", parameters = list(location = 0), contrast =
-    "meandif"),
+  rescale_priors = 1,
+  priors_effect = set_default_priors("effect", rescale = rescale_priors),
+  priors_heterogeneity = set_default_priors("heterogeneity", rescale = rescale_priors),
+  priors_effect_null = set_default_priors("effect", null = TRUE),
+  priors_heterogeneity_null = set_default_priors("heterogeneity", null = TRUE),
+  priors_hierarchical = set_default_priors("hierarchical"),
+  priors_hierarchical_null = set_default_priors("hierarchical", null = TRUE),
+  prior_covariates = set_default_priors("covariates", rescale = rescale_priors),
+  prior_covariates_null = set_default_priors("covariates", null = TRUE),
+  prior_factors = set_default_priors("factors", rescale = rescale_priors),
+  prior_factors_null = set_default_priors("factors", null = TRUE),
+  algorithm = "bridge",
   chains = 3,
   sample = 5000,
   burnin = 2000,
@@ -87,7 +85,9 @@ the samples from prior distributions are internally transformed to match the
 the effect size scale of default output, but can be changed within the summary function.}
 
 \item{standardize_predictors}{whether continuous predictors should be standardized prior to
-estimating the model. Defaults to \code{TRUE}.}
+estimating the model. Defaults to \code{TRUE}. Continuous predictor standardization is important
+for applying the default prior distributions for continuous predictors. Note that the resulting
+output corresponds to standardized meta-regression coefficients.}
 
 \item{priors}{named list of prior distributions for each predictor
 (with names corresponding to the predictors). It allows users to
@@ -113,6 +113,9 @@ settings passed to the \code{priors_effect}, \code{priors_heterogeneity},
 \code{priors_effect}, \code{priors_effect_null}, \code{priors_heterogeneity_null},
 \code{priors_bias_null}, and \code{priors_effect}. See details for more information
 about the different model types.}
+
+\item{rescale_priors}{a re-scaling factor for the prior distributions. The re-scaling
+factor allows to adjust the width of all default priors simultaneously. Defaults to \code{1}.}
 
 \item{priors_effect}{list of prior distributions for the effect size (\code{mu})
 parameter that will be treated as belonging to the alternative hypothesis. Defaults to
@@ -163,6 +166,12 @@ multivariate normal distribution specifying differences from the mean contrasts
 of categorical covariates on the effect size under the null hypothesis
 (unless set explicitly in \code{priors}). Defaults to a no effect
 \code{prior("spike",  parameters = list(location = 0))}.}
+
+\item{algorithm}{a string specifying the algorithm used for the model averaging. Defaults to \code{"bridge"}
+which results in estimating individual models using JAGS and computing the marginal likelihood using bridge
+sampling. An alternative is \code{"ss"} which uses spike and slab like parameterization to approximate the
+Bayesian model averaging with a single model. Note that significantly more \code{sample}, \code{burnin}, and
+\code{adapt} iterations are needed for the \code{"ss"} algorithm.}
 
 \item{chains}{a number of chains of the MCMC algorithm.}
 

@@ -25,29 +25,16 @@ RoBMA(
   prior_scale = if (is.null(y)) "cohens_d" else "none",
   effect_direction = "positive",
   model_type = NULL,
-  priors_effect = prior(distribution = "normal", parameters = list(mean = 0, sd = 1)),
-  priors_heterogeneity = prior(distribution = "invgamma", parameters = list(shape = 1,
-    scale = 0.15)),
-  priors_bias = list(prior_weightfunction(distribution = "two.sided", parameters =
-    list(alpha = c(1, 1), steps = c(0.05)), prior_weights = 1/12),
-    prior_weightfunction(distribution = "two.sided", parameters = list(alpha = c(1, 1,
-    1), steps = c(0.05, 0.1)), prior_weights = 1/12), prior_weightfunction(distribution =
-    "one.sided", parameters = list(alpha = c(1, 1), steps = c(0.05)), prior_weights =
-    1/12), prior_weightfunction(distribution = "one.sided", parameters = list(alpha =
-    c(1, 1, 1), steps = c(0.025, 0.05)), prior_weights = 1/12), 
-    
-    prior_weightfunction(distribution = "one.sided", parameters = list(alpha = c(1, 1,
-    1), steps = c(0.05, 0.5)), prior_weights = 1/12), prior_weightfunction(distribution =
-    "one.sided", parameters = list(alpha = c(1, 1, 1, 1), steps = c(0.025, 0.05, 0.5)),
-    prior_weights = 1/12), prior_PET(distribution = "Cauchy", parameters = list(0, 1),
-    truncation = list(0, Inf), prior_weights = 1/4), prior_PEESE(distribution = "Cauchy",
-    parameters = list(0, 5), truncation = list(0, Inf), prior_weights = 1/4)),
-  priors_effect_null = prior(distribution = "point", parameters = list(location = 0)),
-  priors_heterogeneity_null = prior(distribution = "point", parameters = list(location =
-    0)),
-  priors_bias_null = prior_none(),
-  priors_hierarchical = prior("beta", parameters = list(alpha = 1, beta = 1)),
-  priors_hierarchical_null = NULL,
+  rescale_priors = 1,
+  priors_effect = set_default_priors("effect", rescale = rescale_priors),
+  priors_heterogeneity = set_default_priors("heterogeneity", rescale = rescale_priors),
+  priors_bias = set_default_priors("bias", rescale = rescale_priors),
+  priors_effect_null = set_default_priors("effect", null = TRUE),
+  priors_heterogeneity_null = set_default_priors("heterogeneity", null = TRUE),
+  priors_bias_null = set_default_priors("bias", null = TRUE),
+  priors_hierarchical = set_default_priors("hierarchical"),
+  priors_hierarchical_null = set_default_priors("hierarchical", null = TRUE),
+  algorithm = "bridge",
   chains = 3,
   sample = 5000,
   burnin = 2000,
@@ -131,6 +118,9 @@ settings passed to the \code{priors_effect}, \code{priors_heterogeneity},
 \code{priors_bias_null}, and \code{priors_effect}. See details for more information
 about the different model types.}
 
+\item{rescale_priors}{a re-scaling factor for the prior distributions. The re-scaling
+factor allows to adjust the width of all default priors simultaneously. Defaults to \code{1}.}
+
 \item{priors_effect}{list of prior distributions for the effect size (\code{mu})
 parameter that will be treated as belonging to the alternative hypothesis. Defaults to
 a standard normal distribution
@@ -184,6 +174,12 @@ Note that this is an experimental feature and see News for more details. Default
 
 \item{priors_hierarchical_null}{list of prior distributions for the correlation of random effects
 (\code{rho}) parameter that will be treated as belonging to the null hypothesis. Defaults to \code{NULL}.}
+
+\item{algorithm}{a string specifying the algorithm used for the model averaging. Defaults to \code{"bridge"}
+which results in estimating individual models using JAGS and computing the marginal likelihood using bridge
+sampling. An alternative is \code{"ss"} which uses spike and slab like parameterization to approximate the
+Bayesian model averaging with a single model. Note that significantly more \code{sample}, \code{burnin}, and
+\code{adapt} iterations are needed for the \code{"ss"} algorithm.}
 
 \item{chains}{a number of chains of the MCMC algorithm.}
 
@@ -247,7 +243,12 @@ of the package (i.e., RoBMA < 2.0) used specifications proposed by
 \insertCite{maier2020robust;textual}{RoBMA} (this specification can be easily
 obtained by setting \code{model_type = "2w"}. The RoBMA-PP specification from
 \insertCite{bartos2021no;textual}{RoBMA} can be obtained by setting
-\code{model_type = "PP"}.
+\code{model_type = "PP"}. The complete list of default prior distributions is described at
+\code{\link[=set_default_priors]{set_default_priors()}}. Note that inclusion of the PET and PEESE style publication bias adjustments
+models might pick up on small-study effects. To remove true heterogeneity due to study design,
+sub-populations, treatments etc. potentially causing small-study effects, use meta-regression
+via the \code{\link[=RoBMA.reg]{RoBMA.reg()}} function, or remove the PET and PEESE style models from the publication bias
+adjustment component of the ensemble.
 
 The \href{../doc/CustomEnsembles.html}{\code{vignette("CustomEnsembles", package = "RoBMA")}}
 and \href{../doc/ReproducingBMA.html}{\code{vignette("ReproducingBMA", package = "RoBMA")}}

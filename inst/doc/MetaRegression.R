@@ -20,8 +20,8 @@ fit_RoBMA <- readRDS(file = "../models/MetaRegression/fit_RoBMA.RDS")
 ## ----include = FALSE, eval = FALSE--------------------------------------------
 # library(RoBMA)
 # 
-# fit_BMA    <- NoBMA.reg(~ measure + age, data = Andrews2021, parallel = TRUE, seed = 1)
-# fit_RoBMA  <- RoBMA.reg(~ measure + age, data = Andrews2021, parallel = TRUE, seed = 1, chains = 1)
+# fit_BMA    <- NoBMA.reg(~ measure + age, data = Andrews2021, parallel = TRUE, seed = 1, save = "min")
+# fit_RoBMA  <- RoBMA.reg(~ measure + age, data = Andrews2021, parallel = TRUE, seed = 1, chains = 1, save = "min")
 # 
 # saveRDS(fit_BMA,   file = "../models/MetaRegression/fit_BMA.RDS",   compress = "xz")
 # saveRDS(fit_RoBMA, file = "../models/MetaRegression/fit_RoBMA.RDS", compress = "xz")
