@@ -12,7 +12,7 @@
 
 <meta name="author" content="František Bartoš" />
 
-<meta name="date" content="2025-02-04" />
+<meta name="date" content="2025-06-11" />
 
 <title>Hierarchical Bayesian Model-Averaged Meta-Analysis</title>
 
@@ -50,8 +50,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +63,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -364,7 +365,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Hierarchical Bayesian Model-Averaged
 Meta-Analysis</h1>
 <h4 class="author">František Bartoš</h4>
-<h4 class="date">2025-02-04</h4>
+<h4 class="date">2025-06-11</h4>
 
 
 
@@ -383,6 +384,20 @@ package and discuss the results. Third, we outline the hierarchical
 meta-analysis parameterization. Fourth, we estimate the Bayesian
 model-averaged hierarchical meta-analysis. Finally, we conclude by
 discussing further extensions and publication bias adjustment.</p>
+<p>Note that since version 3.5 of the <code>RoBMA</code> package, the
+hierarchical meta-analysis and meta-regression can use the
+spike-and-slab model-averaging algorithm described in <a href="FastRoBMA.html">Fast Robust Bayesian Meta-Analysis via Spike and
+Slab Algorithm</a>. The spike-and-slab model-averaging algorithm is a
+more efficient alternative to the bridge algorithm, which is the current
+default in the <code>RoBMA</code> package. For non-selection models, the
+likelihood used in the spike-and-slab algorithm is equivalent to the
+bridge algorithm. However, the likelihood in the selection models is
+modified since marginalization of the random-effects is not performed.
+As such, the selection models use likelihood that closely approximates
+the exact selection model likelihood. In our testing and a simulation
+study, found that the approximate selection likelihood performs
+reasonably well and is better than the non-hierarchical exact likelihood
+model when within-study dependencies are present.</p>
 <div id="example-data-set" class="section level3">
 <h3>Example Data Set</h3>
 <p>We use the <code>dat.konstantopoulos2011</code> data set from the
@@ -849,7 +864,7 @@ Psychology</em>, <em>2</em>(1), 123–138. <a href="https://doi.org/10.1080/2374
 <div id="ref-konstantopoulos2011fixed" class="csl-entry">
 Konstantopoulos, S. (2011). Fixed effects and variance components
 estimation in three-level meta-analysis. <em>Research Synthesis
-Methods</em>, <em>2</em>(1), 61–76. <a href="https://doi.org/10.1002/jrsm.35⁠">https://doi.org/10.1002/jrsm.35⁠</a>
+Methods</em>, <em>2</em>(1), 61–76. <a href="https://doi.org/10.1002/jrsm.35">https://doi.org/10.1002/jrsm.35</a>
 </div>
 <div id="ref-metadat" class="csl-entry">
 Thomas, W., Daniel, N., Alistair, S., W. Kyle, H., &amp; Wolfgang, V.
