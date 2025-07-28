@@ -1,3 +1,16 @@
+## version 3.5.1
+### Features
+- `summary()` function now supports a `standardized_coefficients` argument to report either standardized (default) or raw meta-regression coefficients
+- `extract()` function to extract the posterior samples of the model parameters
+- `true_effects()` function to summarize the true effect size estimates of `RoBMA()` and `RoBMA.reg()` models when using the `algorithm = "ss"`
+- `predict()` method for `RoBMA()` and `RoBMA.reg()` models when using the `algorithm = "ss"`
+
+### Fixes
+- fitting a meta-regression using predictors with missing values result in a clear error message
+
+### Changes
+- improving the speed of unit tests
+
 ## version 3.5
 ### Features
 - approximate and computationally feasibly 3lvl selection models via the `RoBMA()` and `RoBMA.reg()` functions with the `study_ids` argument when using `algorithm = "ss"`

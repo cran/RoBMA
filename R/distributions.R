@@ -39,6 +39,20 @@
 #' @name weighted_normal
 #'
 #' @seealso \link[stats]{Normal}
+#' @examples
+#' # generate random samples from weighted normal distribution
+#' samples <- rwnorm(n = 10000, mean = 0.15, sd = 0.10, 
+#'                   steps = c(0.025, 0.5), omega = c(0.1, 0.5, 1), 
+#'                   type = "one.sided")
+#' # hist(samples)
+#' 
+#' # compute density at specific values
+#' density_vals <- dwnorm(x = c(-2, 0, 2), mean = 0, sd = 1, 
+#'                        steps = c(0.05), omega = c(0.5, 1))
+#' 
+#' # compute cumulative probabilities  
+#' prob_vals <- pwnorm(q = c(-1, 0, 1), mean = 0, sd = 1,
+#'                     steps = c(0.05), omega = c(0.5, 1))
 NULL
 
 #' @rdname weighted_normal
@@ -454,6 +468,65 @@ rwnorm <- function(n, mean, sd, steps = if(!is.null(crit_x)) NULL, omega, crit_x
   }else{
     return(exp(log_lik))
   }
+}
+
+# fast computation - no input check, pre-formatted for posterior predictive
+.rwnorm_predict_fast      <- function(mean, sd, omega, crit_x){
+
+  # samples
+  x <- stats::rnorm(length(mean), mean = mean, sd = sd)
+
+  # find correct weight
+  w <- rep(NA, length(mean))
+  for(i in rev(seq_along(crit_x))){
+    w[is.na(w) & x >= crit_x[i]] <- omega[is.na(w) & x >= crit_x[i], i + 1]
+  }
+  w[is.na(w) & x < crit_x[i]] <- omega[is.na(w) & x < crit_x[i], 1]
+
+  # deal with computer precision errors from JAGS
+  w[w > 1] <- 1
+  w[w < 0] <- 0
+
+  # assign publication status
+  p <- stats::rbinom(length(mean), 1, prob = w) == 1
+
+  # re-sample the missing estimates
+  x[!p] <- NA
+
+  if(any(!p)){
+    x[!p] <- .rwnorm_predict_fast(mean[!p], sd[!p], omega[!p,,drop=FALSE], crit_x)
+  }
+
+  return(x)
+}
+.rwnorm_predict_true_fast <- function(mean, tau, se, omega, crit_x){
+
+  # samples
+  xt <- stats::rnorm(length(mean), mean = mean, sd = tau)
+  xo <- stats::rnorm(length(mean), mean = xt,   sd = se)
+
+  # find correct weight
+  w <- rep(NA, length(mean))
+  for(i in rev(seq_along(crit_x))){
+    w[is.na(w) & xo >= crit_x[i]] <- omega[is.na(w) & xo >= crit_x[i], i + 1]
+  }
+  w[is.na(w) & xo < crit_x[i]] <- omega[is.na(w) & xo < crit_x[i], 1]
+
+  # deal with computer precision errors from JAGS
+  w[w > 1] <- 1
+  w[w < 0] <- 0
+
+  # assign publication status
+  p <- stats::rbinom(length(mean), 1, prob = w) == 1
+
+  # re-sample the missing estimates
+  xt[!p] <- NA
+
+  if(any(!p)){
+    xt[!p] <- .rwnorm_predict_true_fast(mean[!p], tau[!p], se, omega[!p,,drop=FALSE], crit_x)
+  }
+
+  return(xt)
 }
 
 # helper functions
