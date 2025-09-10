@@ -17,8 +17,6 @@ print.RoBMA <- function(x, ...){
 
 
 
-
-
 #' @title Summarize fitted RoBMA object
 #'
 #' @description \code{summary.RoBMA} creates summary tables for a
@@ -181,7 +179,7 @@ summary.RoBMA       <- function(object, type = "ensemble", conditional = FALSE,
     }
 
     # add meta-regression summaries
-    if(is.RoBMA.reg(object)){
+    if(.is_regression(object)){
 
       # rename the inference components
       for(i in seq_along(object$RoBMA[["inference_predictors"]])){
@@ -201,7 +199,7 @@ summary.RoBMA       <- function(object, type = "ensemble", conditional = FALSE,
       if(!is.null(object$RoBMA[["posteriors_predictors"]])){
 
         # Transform samples if raw coefficients are requested
-        if (!standardized_coefficients && is.RoBMA.reg(object)){
+        if (!standardized_coefficients && .is_regression(object)){
           object$RoBMA[["posteriors_predictors"]] <- .unstandardize_posterior_samples(object$RoBMA[["posteriors_predictors"]], attr(object$data$predictors, "variables_info"))
         }
 
@@ -232,7 +230,7 @@ summary.RoBMA       <- function(object, type = "ensemble", conditional = FALSE,
         }else{
 
           # Transform samples if raw coefficients are requested
-          if (!standardized_coefficients && is.RoBMA.reg(object)){
+          if (!standardized_coefficients && .is_regression(object)){
             object$RoBMA[["posteriors_predictors_conditional"]] <- .unstandardize_posterior_samples(object$RoBMA[["posteriors_predictors_conditional"]], attr(object$data$predictors, "variables_info"))
           }
 
@@ -458,7 +456,7 @@ summary.RoBMA       <- function(object, type = "ensemble", conditional = FALSE,
     }
 
     # add meta-regression summaries
-    if(is.RoBMA.reg(object)){
+    if(.is_regression(object)){
 
       if(!is.null(object$RoBMA[["inference_predictors"]])){
         output$components_predictors <- BayesTools:::update.BayesTools_table(
@@ -472,7 +470,7 @@ summary.RoBMA       <- function(object, type = "ensemble", conditional = FALSE,
       if(!is.null(object$RoBMA[["posteriors_predictors"]])){
 
         # Transform samples if raw coefficients are requested
-        if (!standardized_coefficients && is.RoBMA.reg(object)){
+        if (!standardized_coefficients && .is_regression(object)){
           object$RoBMA[["posteriors_predictors"]] <- .unstandardize_posterior_samples(object$RoBMA[["posteriors_predictors"]], attr(object$data$predictors, "variables_info"))
         }
 
@@ -502,7 +500,7 @@ summary.RoBMA       <- function(object, type = "ensemble", conditional = FALSE,
         }else{
 
           # Transform samples if raw coefficients are requested
-          if (!standardized_coefficients && is.RoBMA.reg(object)){
+          if (!standardized_coefficients && .is_regression(object)){
             object$RoBMA[["posteriors_predictors_conditional"]] <- .unstandardize_posterior_samples(object$RoBMA[["posteriors_predictors_conditional"]], attr(object$data$predictors, "variables_info"))
           }
 
@@ -647,9 +645,41 @@ print.summary.RoBMA <- function(x, ...){
 #'
 #'
 #' @return returns a boolean.
+#' @title Test for class membership
 #'
+#' @description Functions to test whether an object is of a specific RoBMA class.
+#'
+#' @param x object to be tested
+#'
+#' @details 
+#' These functions test whether an object inherits from specific RoBMA classes:
+#' \itemize{
+#'   \item \code{is.RoBMA}: Tests for \code{"RoBMA"} class (Robust Bayesian Meta-Analysis)
+#'   \item \code{is.RoBMA.reg}: Tests for \code{"RoBMA.reg"} class (RoBMA with meta-regression)
+#'   \item \code{is.NoBMA}: Tests for \code{"NoBMA"} class (Normal-normal Bayesian Meta-Analysis)
+#'   \item \code{is.NoBMA.reg}: Tests for \code{"NoBMA.reg"} class (NoBMA with meta-regression)
+#'   \item \code{is.BiBMA}: Tests for \code{"BiBMA"} class (Binomial-normal Bayesian Meta-Analysis)
+#'   \item \code{is.BiBMA.reg}: Tests for \code{"BiBMA.reg"} class (BiBMA with meta-regression)
+#' }
+#'
+#' @return \code{TRUE} if the object inherits from the specified class, \code{FALSE} otherwise.
+#'
+#' @examples
+#' \dontrun{
+#' # Example with Anderson et al. 2010 data
+#' fit <- RoBMA(r = Anderson2010$r, n = Anderson2010$n)
+#' is.RoBMA(fit)        # TRUE
+#' is.BiBMA(fit)        # FALSE
+#' 
+#' # Example with regression
+#' fit_reg <- RoBMA.reg(r ~ 1, data = Anderson2010)
+#' is.RoBMA.reg(fit_reg)  # TRUE
+#' is.RoBMA(fit_reg)      # TRUE (inherits from RoBMA)
+#' }
+#'
+#' @seealso [RoBMA()], [RoBMA.reg()], [NoBMA()], [BiBMA()]
 #' @name is.RoBMA
-#' @aliases is.RoBMA.reg is.NoBMA is.NoBMA.reg is.BiBMA
+#' @aliases is.RoBMA.reg is.NoBMA is.NoBMA.reg is.BiBMA is.BiBMA.reg
 #' @export is.RoBMA
 #' @export is.RoBMA.reg
 #' @export is.NoBMA

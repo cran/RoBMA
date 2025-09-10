@@ -106,6 +106,7 @@
 #' }
 #'
 #' @return \code{pooled_effect} returns a list of tables of class 'BayesTools_table'.
+#' @seealso [true_effects()], [residuals.RoBMA()]
 #' @export
 predict.RoBMA <- function(object, newdata = NULL, type = "response",
                           conditional = FALSE, output_scale = NULL, probs = c(.025, .975),
@@ -113,9 +114,9 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
 
   # some options checked inside BayesTools table directly
   BayesTools::check_char(type, "type", allow_values = c("response", "terms", "effect"))
-  if((is.RoBMA.reg(object) || is.NoBMA.reg(object) || is.BiBMA.reg(object)) && !(is.null(newdata) || is.data.frame(newdata)))
+  if(.is_regression(object) && !(is.null(newdata) || is.data.frame(newdata)))
     stop("The 'newdata' argument must be a data frame or NULL when performing prediction for meta-regression models.", call. = FALSE)
-  if(!(is.RoBMA.reg(object) || is.NoBMA.reg(object) || is.BiBMA.reg(object)) && !(is.null(newdata) || is.list(newdata)))
+  if(!.is_regression(object) && !(is.null(newdata) || is.list(newdata)))
     stop("The 'newdata' argument must be a list or NULL when performing prediction for meta-analytic models.", call. = FALSE)
   BayesTools::check_bool(conditional, "conditional")
   BayesTools::check_char(output_scale, "output_scale", allow_NULL = TRUE)
@@ -150,12 +151,10 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
     # - when predicting effects/outcomes for multilevel outcomes, use estimated gamma levels
 
     # dispatch between meta-regression / meta-analysis input
-    if(inherits(object, "RoBMA.reg") || inherits(object, "NoBMA.reg") || inherits(object, "BiBMA.reg")){
+    if(.is_regression(object)){
       newdata.predictors <- do.call(cbind.data.frame, object$data[["predictors"]])
-      newdata.outcome    <- object$data[["outcome"]]
-    }else{
-      newdata.outcome <- object$data
     }
+    newdata.outcome <- .get_outcome_data(object)
 
   }else{
 
@@ -164,7 +163,7 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
     # - when predicting effects/outcomes for multilevel outcomes, average across possible tau_within levels via sampling
 
     # dispatch between meta-regression / meta-analysis input
-    if(inherits(object, "RoBMA.reg") || inherits(object, "NoBMA.reg") || inherits(object, "BiBMA.reg")){
+    if(.is_regression(object)){
 
       RoBMA.options(check_scaling = FALSE)
       newdata <- .combine_data.reg(
@@ -207,7 +206,7 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
 
   # obtain the (study-specific) mu estimate
   # meta-regression and meta-analysis separately
-  if(inherits(object, "RoBMA.reg") || inherits(object, "NoBMA.reg") || inherits(object, "BiBMA.reg")){
+  if(.is_regression(object)){
 
     mu_samples  <- t(BayesTools::JAGS_evaluate_formula(
       fit         = object$model$fit,
@@ -229,6 +228,14 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
 
   # transform the samples to the model fitting scale (the data are at the model fitting scale)
   mu_samples  <- .scale(mu_samples,  object$add_info[["output_scale"]], model_scale)
+
+  # adjust effect samples and data to match original observed data direction
+  # (to undo fitting adjustment for one-sided weightfunction)
+  # the residuals need to be flipped back before being returned
+  if(!is.null(object$add_info[["effect_direction"]]) && object$add_info[["effect_direction"]] == "negative"){
+    newdata.outcome[,"y"] <- -newdata.outcome[,"y"]
+    mu_samples            <- -mu_samples
+  }
 
   # add conditional warnings
   if(conditional){
@@ -359,9 +366,9 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
             )
           }
 
-          # sample selection models (.rwnorm_predict_true_fast returns the implied random effects for given selection)
+          # sample selection models (.rwnorm_true_fast.ss returns the implied random effects for given selection)
           if(any(weightfunction_indicator)){
-            outcome_samples[weightfunction_indicator,i] <- .rwnorm_predict_true_fast(
+            outcome_samples[weightfunction_indicator,i] <- .rwnorm_true_fast.ss(
               mean   = mu_samples[weightfunction_indicator,i],
               tau    = tau_samples[weightfunction_indicator],
               se     = newdata.outcome[i,"se"],
@@ -386,7 +393,7 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
 
           # sample selection models
           if(any(weightfunction_indicator)){
-            outcome_samples[weightfunction_indicator,i] <- .rwnorm_predict_fast(
+            outcome_samples[weightfunction_indicator,i] <- .rwnorm_fast.ss(
               mean   = mu_samples[weightfunction_indicator,i],
               sd     = sqrt(tau_samples[weightfunction_indicator]^2 + newdata.outcome[i,"se"]^2),
               omega  = posterior_samples[weightfunction_indicator, grep("omega", colnames(posterior_samples)),drop = FALSE],
@@ -404,6 +411,10 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
     outcome_samples <- mu_samples
   }
 
+  # flip outcome samples back to the original direction
+  if(!is.null(object$add_info[["effect_direction"]]) && object$add_info[["effect_direction"]] == "negative"){
+    outcome_samples <- -outcome_samples
+  }
 
   # select conditional estimates
   if(conditional){
@@ -445,7 +456,7 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
     parameters = names(outcome_samples),
     probs      = probs,
     title      = "Posterior predictions:",
-    footnotes  = c(.scale_note(object$add_info[["prior_scale"]], output_scale))
+    footnotes  = c(.scale_note_simple(object$add_info[["prior_scale"]], output_scale))
   )
 
   if(conditional){
@@ -454,7 +465,7 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
       parameters = names(outcome_samples_conditional),
       probs      = probs,
       title      = "Conditional posterior predictions:",
-      footnotes  = c(.scale_note(object$add_info[["prior_scale"]], output_scale))
+      footnotes  = c(.scale_note_simple(object$add_info[["prior_scale"]], output_scale))
     )
   }
 
@@ -463,7 +474,7 @@ predict.RoBMA <- function(object, newdata = NULL, type = "response",
     call       = object[["call"]],
     title      = .object_title(object),
     estimates  = estimates,
-    footnotes  = c(.scale_note(object$add_info[["prior_scale"]], output_scale))
+    footnotes  = c(.scale_note_simple(object$add_info[["prior_scale"]], output_scale))
   )
 
   if(conditional){

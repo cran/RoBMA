@@ -1,3 +1,10 @@
+## version 3.6
+### Features
+- `funnel()` plot to visualize residuals vs the expected sampling distribution for `RoBMA()` and `RoBMA.reg()` models when using the `algorithm = "ss"`
+- `residuals()` method for `RoBMA()` and `RoBMA.reg()` models when using the `algorithm = "ss"`
+- `as_zcurve()` function to transform meta-analytic models into a z-curve style object, only available for `RoBMA()` and `RoBMA.reg()` fitted using the `algorithm = "ss"`
+- `plot()`, `summary()`, and `print()` functions for the `as_zcurve` objects
+
 ## version 3.5.1
 ### Features
 - `summary()` function now supports a `standardized_coefficients` argument to report either standardized (default) or raw meta-regression coefficients
