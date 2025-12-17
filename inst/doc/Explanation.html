@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Guide to RoBMA Vignettes</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Guide to RoBMA Vignettes</h1>
+
+
+
+<p>The <code>RoBMA</code> package provides a comprehensive set of
+vignettes to help users navigate different aspects of Robust Bayesian
+Meta-Analysis. This guide outlines the available vignettes and their
+specific focus to help you find the relevant information for your
+analysis.</p>
+<div id="introductory-vignettes" class="section level2">
+<h2>Introductory Vignettes</h2>
+<div id="tutorial-adjusting-for-publication-bias-in-jasp-and-r" class="section level3">
+<h3><a href="Tutorial.html">Tutorial: Adjusting for Publication Bias in
+JASP and R</a></h3>
+<p>This is the main introduction to the RoBMA framework. It covers the
+basics of adjusting for publication bias using selection models,
+PET-PEESE, and Robust Bayesian Meta-Analysis. It is the recommended
+starting point for new users.</p>
+</div>
+<div id="reproducing-bayesian-model-averaged-meta-analysis" class="section level3">
+<h3><a href="ReproducingBMA.html">Reproducing Bayesian Model-Averaged
+Meta-Analysis</a></h3>
+<p>This vignette demonstrates how to perform a classic Bayesian
+model-averaged meta-analysis. It focuses on reproducing standard BMA
+results and understanding the core components of the method.</p>
+</div>
+</div>
+<div id="advanced-modeling-features" class="section level2">
+<h2>Advanced Modeling Features</h2>
+<div id="robust-bayesian-model-averaged-meta-regression" class="section level3">
+<h3><a href="MetaRegression.html">Robust Bayesian Model-Averaged
+Meta-Regression</a></h3>
+<p>Learn how to incorporate moderators into your meta-analysis using
+<code>RoBMA.reg()</code>. This vignette explains how to fit
+meta-regression models to account for heterogeneity explained by
+study-level covariates.</p>
+</div>
+<div id="multilevel-robust-bayesian-meta-analysis" class="section level3">
+<h3><a href="MultilevelRoBMA.html">Multilevel Robust Bayesian
+Meta-Analysis</a></h3>
+<p>This vignette demonstrates how to perform multilevel meta-analysis to
+account for dependent effect sizes (e.g., multiple estimates from the
+same study). It uses the spike-and-slab algorithm
+(<code>algorithm = &quot;ss&quot;</code>) to efficiently estimate models with
+within-study and between-study heterogeneity while adjusting for
+publication bias.</p>
+</div>
+<div id="multilevel-robust-bayesian-model-averaged-meta-regression" class="section level3">
+<h3><a href="MultilevelRoBMARegression.html">Multilevel Robust Bayesian
+Model-Averaged Meta-Regression</a></h3>
+<p>This vignette demonstrates how to perform multilevel meta-regression.
+In addition, it illustrates how to rescale default prior distributions
+to work with non-standardized effect sizes.</p>
+</div>
+<div id="z-curve-publication-bias-diagnostics" class="section level3">
+<h3><a href="ZCurveDiagnostics.html">Z-Curve Publication Bias
+Diagnostics</a></h3>
+<p>This vignette details the use of meta-analytic z-curves for
+diagnosing publication bias. It explains how to interpret z-curve plots
+and statistics provided by the package.</p>
+</div>
+</div>
+<div id="specialized-applications" class="section level2">
+<h2>Specialized Applications</h2>
+<div id="informed-bayesian-model-averaged-meta-analysis-in-medicine" class="section level3">
+<h3><a href="MedicineBMA.html">Informed Bayesian Model-Averaged
+Meta-Analysis in Medicine</a></h3>
+<p>This vignette focuses on applying RoBMA in medical contexts. It
+discusses the use of informed priors tailored for medical research
+questions and continuous outcomes.</p>
+</div>
+<div id="informed-bayesian-model-averaged-meta-analysis-with-binary-outcomes" class="section level3">
+<h3><a href="MedicineBiBMA.html">Informed Bayesian Model-Averaged
+Meta-Analysis with Binary Outcomes</a></h3>
+<p>Similar to the Medicine BMA vignette, but specifically for binary
+outcomes. It covers the <code>BiBMA</code> models (Binomial-Normal) and
+appropriate prior settings for medical meta-analysis with binary
+data.</p>
+</div>
+</div>
+<div id="customization-and-performance" class="section level2">
+<h2>Customization and Performance</h2>
+<div id="fitting-custom-meta-analytic-ensembles" class="section level3">
+<h3><a href="CustomEnsembles.html">Fitting Custom Meta-Analytic
+Ensembles</a></h3>
+<p>For advanced users who need to go beyond the default model ensembles.
+This vignette demonstrates how to customize the ensemble of models,
+including specifying custom priors and model combinations.</p>
+</div>
+<div id="fast-robust-bayesian-meta-analysis-via-spike-and-slab-algorithm" class="section level3">
+<h3><a href="FastRoBMA.html">Fast Robust Bayesian Meta-Analysis via
+Spike and Slab Algorithm</a></h3>
+<p>For computationally intensive problems or quick approximations, the
+“spike-and-slab” algorithm (<code>algorithm = &quot;ss&quot;</code>) can be used.
+This vignette explains how to use this faster alternative to the default
+bridge sampling approach.</p>
+</div>
+<div id="hierarchical-bayesian-model-averaged-meta-analysis" class="section level3">
+<h3><a href="HierarchicalBMA.html">Hierarchical Bayesian Model-Averaged
+Meta-Analysis</a></h3>
+<p>This vignette introduces multilevel models. It shows how to handle
+dependencies in the data (e.g., multiple effect sizes from the same
+study) using the <code>study_ids</code> argument to specify a
+hierarchical structure. Note that this vignette relies on multivariate
+parameterization that is relevant only for the bridge sampling
+algorithm. However, it is still helpful for describing the
+parameterization.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

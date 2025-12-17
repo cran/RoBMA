@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="František Bartoš" />
+
+<meta name="date" content="2025-01-01" />
+
+<title>Multilevel Robust Bayesian Meta-Analysis</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Multilevel Robust Bayesian
+Meta-Analysis</h1>
+<h4 class="author">František Bartoš</h4>
+<h4 class="date">2025</h4>
+
+
+
+<p><strong>This vignette accompanies the manuscript <a href="https://doi.org/10.31234/osf.io/9tgp2_v1">Robust Bayesian
+Multilevel Meta-Analysis: Adjusting for Publication Bias in the Presence
+of Dependent Effect Sizes</a> preprinted at <em>PsyArXiv</em> <span class="citation">(Bartoš et al., 2025)</span>.</strong></p>
+<p>This vignette reproduces the first example from the manuscript. For
+multilevel meta-regression with moderators see <a href="MultilevelRoBMARegression.html">Multilevel Robust Bayesian
+Model-Averaged Meta-Regression</a>.</p>
+<p>Multilevel Robust Bayesian Meta-Analysis (RoBMA) extends the standard
+RoBMA framework to datasets containing multiple effect sizes from the
+same studies. We demonstrate the method using data from <span class="citation">Johnides et al. (2025)</span>, who meta-analyzed 412
+effect sizes from 128 studies investigating secondary benefits of
+family-based treatments for childhood disorders.</p>
+<div id="when-to-use-multilevel-robma" class="section level3">
+<h3>When to Use Multilevel RoBMA</h3>
+<p>Multilevel RoBMA is appropriate for dataset that contain multiple
+effect sizes from the same studies. The multilevel approach explicitly
+models the clustering structure through the <code>study_ids</code>
+argument, which:</p>
+<ul>
+<li>accounts for dependencies among effect sizes from the same
+study,</li>
+<li>partitions heterogeneity into within-study and between-study
+components,</li>
+<li>while simultaneously adjusting for publication bias at the study
+level (corresponding to selective reporting).</li>
+</ul>
+</div>
+<div id="loading-the-data" class="section level3">
+<h3>Loading the Data</h3>
+<p>We load the package and examine the dataset structure.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(RoBMA)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Johnides2025&quot;</span>, <span class="at">package =</span> <span class="st">&quot;RoBMA&quot;</span>)</span></code></pre></div>
+<p>The dataset contains effect sizes (<code>d</code>), standard errors
+(<code>se</code>), and study identifiers (<code>study</code>).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">head</span>(Johnides2025)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt;                 study       d        se</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; 1 Price et al. (2012)  0.0000 0.1337909</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; 2 Price et al. (2012) -0.1250 0.1337909</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; 3 Price et al. (2012)  0.0000 0.1337909</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; 4 Price et al. (2012)  0.2112 0.1337909</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; 5 Price et al. (2012)  0.0140 0.1337909</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; 6 Price et al. (2012) -0.0186 0.1337909</span></span></code></pre></div>
+<p>Multiple rows share the same study name, indicating that these effect
+sizes come from the same study. For example, the first five effect sizes
+are from “Price et al. (2012)” and might be more similar to each other
+than to effect sizes from other studies.</p>
+</div>
+<div id="fitting-the-multilevel-model" class="section level3">
+<h3>Fitting the Multilevel Model</h3>
+<p>The <code>study_ids</code> argument specifies which effect sizes
+belong together. We use <code>algorithm = &quot;ss&quot;</code> (spike-and-slab),
+which is faster for complex models and neccessary for estimating
+multilevel selection models. The <code>&quot;ss&quot;</code> algorithm estimates
+the models and parameters simultaneously, therefore we increase MCMC
+adaptation, iteration, and sampling to obtain more reliable estimates
+(we disable automatic convergence checking with
+<code>autofit = FALSE</code> to speed up the fitting process here).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">RoBMA</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">d         =</span> Johnides2025<span class="sc">$</span>d, </span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">se        =</span> Johnides2025<span class="sc">$</span>se, </span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">study_ids =</span> Johnides2025<span class="sc">$</span>study, </span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">&quot;ss&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">adapt     =</span> <span class="dv">5000</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">burnin    =</span> <span class="dv">5000</span>, </span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">sample    =</span> <span class="dv">10000</span>, </span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="at">parallel  =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="at">seed      =</span> <span class="dv">1</span>, </span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="at">autofit   =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>)</span></code></pre></div>
+<p><em>Note: This model takes 10-15 minutes with parallel processing
+enabled. Without parallel processing, expect over an hour.</em></p>
+</div>
+<div id="interpreting-the-results" class="section level3">
+<h3>Interpreting the Results</h3>
+<p>The <code>summary()</code> output contains two main sections.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">summary</span>(fit)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; RoBMA(d = Johnides2025$d, se = Johnides2025$se, study_ids = Johnides2025$study, </span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;     algorithm = &quot;ss&quot;, sample = 10000, burnin = 5000, adapt = 5000, </span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;     parallel = TRUE, autofit = FALSE, seed = 1)</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt;               Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; Effect              0.500       0.481        0.927</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; Heterogeneity       0.500       1.000          Inf</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; Bias                0.500       1.000          Inf</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; Hierarchical        1.000       1.000          Inf</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt;                    Mean Median 0.025 0.975</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; mu                0.050  0.000 0.000 0.173</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; tau               0.400  0.400 0.348 0.458</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; rho               0.461  0.464 0.306 0.603</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; omega[0,0.025]    1.000  1.000 1.000 1.000</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; omega[0.025,0.05] 0.997  1.000 0.955 1.000</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; omega[0.05,0.5]   0.946  0.959 0.827 0.998</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; omega[0.5,0.95]   0.198  0.190 0.122 0.317</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; omega[0.95,0.975] 0.198  0.190 0.122 0.317</span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; omega[0.975,1]    0.198  0.190 0.122 0.317</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt; PET               0.000  0.000 0.000 0.000</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#&gt; PEESE             0.000  0.000 0.000 0.000</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#&gt; (Estimated publication weights omega correspond to one-sided p-values.)</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt; [0;31mESS 453 is lower than the set target (500).[0m</span></span></code></pre></div>
+<div id="components-summary" class="section level4">
+<h4>Components Summary</h4>
+<p>This table shows Bayes factors testing the presence of effect,
+heterogeneity, and publication bias. Each row displays the prior
+probability, posterior probability after observing the data, and the
+inclusion Bayes factor comparing models with versus without that
+component.</p>
+<p>In our example, the inclusion BF for the effect is 0.927, indicating
+weak evidence against an effect. The inclusion BF for heterogeneity and
+publication bias are reported as <code>Inf</code>, i.e., beyond the
+numerical precision of the <code>ss</code> algorithm (&gt; 10⁶),
+indicating extreme evidence for both components.</p>
+<p>We also notice warning about effective sample size (ESS) below the
+set target. The difference is however not substantial and we can safely
+ignore it.</p>
+</div>
+<div id="model-averaged-estimates" class="section level4">
+<h4>Model-Averaged Estimates</h4>
+<p>This section provides meta-analytic estimates averaged across all
+models, weighted by their posterior probabilities. The average effect
+size is <code>mu</code>, overall heterogeneity is <code>tau</code>, and
+the heterogeneity allocation parameter <code>rho</code>. The
+heterogeneity allocation parameter <code>rho</code> indicates the
+proportion of heterogeneity within versus between studies:
+<code>rho = 0</code> means all heterogeneity is between studies,
+<code>rho = 1</code> means all is within studies, and
+<code>rho = 0.5</code> means equal split. The remaining parameters
+summarize the weight function and PET/PEESE regression for publication
+bias.</p>
+<p>In our example, we find small effect size (<em>d</em> = 0.050, 95% CI
+[0.000, 0.173]), substantial heterogeneity (τ = 0.40, 95% CI [0.348,
+0.458]), and nearly balanced heterogeneity allocation (ρ = 0.461, 95% CI
+[0.306, 0.603]). The large heterogeneity combined with the small pooled
+effect suggests substantial variation in true effects. This distribution
+of true effect sizes can be obtain by the
+<code>summary_heterogeneity()</code> function:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">summary_heterogeneity</span>(fit)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; RoBMA(d = Johnides2025$d, se = Johnides2025$se, study_ids = Johnides2025$study, </span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;     algorithm = &quot;ss&quot;, sample = 10000, burnin = 5000, adapt = 5000, </span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt;     parallel = TRUE, autofit = FALSE, seed = 1)</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; Model-averaged heterogeneity estimates:</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;        Mean Median  0.025  0.975</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; PI    0.050  0.053 -0.752  0.845</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; tau   0.400  0.400  0.348  0.458</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; tau2  0.080  0.080  0.060  0.105</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; I2   85.609 85.720 81.979 88.735</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; H2    7.051  7.003  5.549  8.877</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; The prediction interval (PI) is summarized on the Cohen&#39;s d scale.</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; The absolute heterogeneity (tau, tau^2) is summarized on the Cohen&#39;s d scale.</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; The relative heterogeneity indicies (I^2 and H^2) were computed on the Fisher&#39;s z scale.</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; [0;31mESS 453 is lower than the set target (500).[0m</span></span></code></pre></div>
+<p>The wide prediction interval (<em>d</em> = -0.752 to 0.845)
+quantifies the degree of this heterogeneity: some studies may show
+benefits while others show harm.</p>
+</div>
+</div>
+<div id="model-types-summary" class="section level3">
+<h3>Model Types Summary</h3>
+<p>To understand which publication bias mechanisms the data support, we
+examine the posterior distribution across model types:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">type =</span> <span class="st">&quot;models&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; RoBMA(d = Johnides2025$d, se = Johnides2025$se, study_ids = Johnides2025$study, </span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt;     algorithm = &quot;ss&quot;, sample = 10000, burnin = 5000, adapt = 5000, </span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt;     parallel = TRUE, autofit = FALSE, seed = 1)</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; Publication bias adjustment summary:</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt;                  Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; None                   0.500       0.000        0.000</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; Weight functions       0.250       1.000          Inf</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; PET-PEESE              0.250       0.000        0.000</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; Publication bias adjustment models summary:</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt;                                           Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; None                                            0.500       0.000        0.000</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; Weight function[two-sided: .05]                 0.042       0.000        0.000</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; Weight function[two-sided: .1, .05]             0.042       0.000        0.000</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; Weight function[one-sided: .05]                 0.042       0.000        0.000</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; Weight function[one-sided: .05, .025]           0.042       0.000        0.000</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; Weight function[one-sided: .5, .05]             0.042       0.903      214.358</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; Weight function[one-sided: .5, .05, .025]       0.042       0.097        2.468</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; PET                                             0.125       0.000        0.000</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; PEESE                                           0.125       0.000        0.000</span></span></code></pre></div>
+<p>Most (all) posterior probability is allocated to selection models
+(weight functions). The publication bias adjustment therefore reflects
+selective reporting rather than small study effects (PET/PEESE
+regression), specifically, one-sided selection operating on marginally
+significant <span class="math inline">\(p\)</span>-values and direction
+of the effect.</p>
+</div>
+<div id="visualizing-the-weight-function" class="section level3">
+<h3>Visualizing the Weight Function</h3>
+<p>The weight function shows how publication probability varies across
+<em>p</em>-value ranges:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">plot</span>(fit, <span class="at">parameter =</span> <span class="st">&quot;weightfunction&quot;</span>, <span class="at">rescale_x =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" /><!-- --></p>
+<p>The plot displays one-sided <em>p</em>-value cutoffs (x-axis) against
+relative publication probability (y-axis), averaged across weight
+function specifications. A flat line at 1.0 indicates no publication
+bias; values below 1.0 indicate suppression.</p>
+<p>In our example, we notice a small drop in the relative publication
+probability at cutoff corresponding to p = 0.05 (one-sided, i.e., 0.10
+two-sided: selection on marginally significant <span class="math inline">\(p\)</span>-values) and a much sharper drop
+corresponding to the direction of the effect (p = 0.50).</p>
+</div>
+<div id="comparison-with-single-level-robma" class="section level3">
+<h3>Comparison with Single-Level RoBMA</h3>
+<p>To understand the importance of accounting for nested structure, we
+compare our results with a standard single-level RoBMA that ignores
+dependencies among effect sizes from the same study.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>fit_simple <span class="ot">&lt;-</span> <span class="fu">RoBMA</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">d         =</span> Johnides2025<span class="sc">$</span>d, </span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">se        =</span> Johnides2025<span class="sc">$</span>se, </span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">&quot;ss&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="at">adapt     =</span> <span class="dv">5000</span>, </span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="at">burnin    =</span> <span class="dv">5000</span>, </span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="at">sample    =</span> <span class="dv">10000</span>, </span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="at">parallel  =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="at">seed      =</span> <span class="dv">1</span>, </span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="at">autofit   =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">summary</span>(fit_simple)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; RoBMA(d = Johnides2025$d, se = Johnides2025$se, algorithm = &quot;ss&quot;, </span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt;     sample = 10000, burnin = 5000, adapt = 5000, parallel = TRUE, </span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt;     autofit = FALSE, seed = 1)</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; Robust Bayesian meta-analysis</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; Components summary:</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt;               Prior prob. Post. prob. Inclusion BF</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; Effect              0.500       0.042        0.044</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; Heterogeneity       0.500       1.000          Inf</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; Bias                0.500       1.000          Inf</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; Model-averaged estimates:</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt;                    Mean Median 0.025 0.975</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; mu                0.001  0.000 0.000 0.005</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; tau               0.374  0.373 0.339 0.411</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; omega[0,0.025]    1.000  1.000 1.000 1.000</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; omega[0.025,0.05] 0.997  1.000 0.963 1.000</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; omega[0.05,0.5]   0.955  0.965 0.853 0.999</span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="co">#&gt; omega[0.5,0.95]   0.222  0.220 0.168 0.286</span></span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="co">#&gt; omega[0.95,0.975] 0.222  0.220 0.168 0.286</span></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="co">#&gt; omega[0.975,1]    0.222  0.220 0.168 0.286</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a><span class="co">#&gt; PET               0.000  0.000 0.000 0.000</span></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="co">#&gt; PEESE             0.000  0.000 0.000 0.000</span></span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a><span class="co">#&gt; The estimates are summarized on the Cohen&#39;s d scale (priors were specified on the Cohen&#39;s d scale).</span></span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a><span class="co">#&gt; (Estimated publication weights omega correspond to one-sided p-values.)</span></span></code></pre></div>
+<p>The single-level model differs by:</p>
+<ul>
+<li>omitting <code>study_ids</code>: it treats all effect sizes as
+independent,</li>
+<li>estimating only one heterogeneity parameter: it cannot distinguish
+within-study from between-study variation,</li>
+<li>potentially biased inference: ignoring dependencies can lead to
+overconfident conclusions.</li>
+</ul>
+<p>For the Johnides et al. data, the single-level RoBMA finds strong
+evidence for the absence of an effect, while the multilevel model
+provides only weak evidence against it. Properly accounting for data
+structure leads to more conservative and appropriate inferences.</p>
+</div>
+<div id="references" class="section level3 unnumbered">
+<h3 class="unnumbered">References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-bartos2025robust" class="csl-entry">
+Bartoš, F., Maier, M., &amp; Wagenmakers, E.-J. (2025). <em>Robust
+<span>B</span>ayesian multilevel meta-analysis: <span>A</span>djusting
+for publication bias in the presence of dependent effect sizes</em>. <a href="https://doi.org/10.31234/osf.io/9tgp2_v1">https://doi.org/10.31234/osf.io/9tgp2_v1</a>
+</div>
+<div id="ref-johnides2025secondary" class="csl-entry">
+Johnides, B. D., Borduin, C. M., Sheerin, K. M., &amp; Kuppens, S.
+(2025). Secondary benefits of family member participation in treatments
+for childhood disorders: <span>A</span> multilevel meta-analytic review.
+<em>Psychological Bulletin</em>, <em>151</em>(1), 1–32. <a href="https://doi.org/10.1037/bul0000462">https://doi.org/10.1037/bul0000462</a>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
