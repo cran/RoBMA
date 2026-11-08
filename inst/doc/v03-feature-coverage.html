@@ -261,7 +261,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Feature Coverage</h1>
 <h4 class="author">František Bartoš</h4>
-<h4 class="date">29th of April 2026</h4>
+<h4 class="date">29th of April 2026 (updated: 29th of October 2026)</h4>
 
 
 
@@ -282,13 +282,10 @@ div.sourceCode {
 overflow-x: auto !important;
 }
 </style>
-<p>This vignette overviews current features of the <code>RoBMA</code> R
+<p>This vignette overviews selected features of the <code>RoBMA</code> R
 package <span class="citation">(<a href="#ref-RoBMA">Bartoš &amp; Maier,
-2020</a>)</span>. The table is organized by substantive capability. Some
-rows point to additional features not (yet) available in the
-<code>RoBMA</code> R package but featured in the <code>metafor</code>
-package <span class="citation">(<a href="#ref-metafor">Viechtbauer,
-2010</a>)</span> as reference points.</p>
+2020</a>)</span>. The table is organized by substantive capability and
+covers the model families named in its columns.</p>
 <p>Green ticks mark available features. Cells marked
 <code>limited</code> mean the feature exists but with narrower model
 coverage.</p>
@@ -315,7 +312,7 @@ width: 60px;
 min-width: 25em;
 }
 .feature-matrix .model-head {
-height: 118px;
+height: 136px;
 min-width: 34px;
 max-width: 34px;
 width: 34px;
@@ -395,16 +392,28 @@ Feature
 <span class="rotated-header"><a href="../reference/brma.html">brma.norm</a></span>
 </th>
 <th class="model-head">
+<span class="rotated-header"><a href="../reference/brma.mv.html">brma.mv</a></span>
+</th>
+<th class="model-head">
 <span class="rotated-header"><a href="../reference/brma.glmm.html">brma.glmm</a></span>
 </th>
 <th class="model-head">
 <span class="rotated-header"><a href="../reference/bselmodel.html">bselmodel</a></span>
 </th>
 <th class="model-head">
+<span class="rotated-header"><a href="../reference/bselmodel.mv.html">bselmodel.mv</a></span>
+</th>
+<th class="model-head">
 <span class="rotated-header"><a href="../reference/bPET.html">bPET</a>/<a href="../reference/bPEESE.html">bPEESE</a></span>
 </th>
 <th class="model-head">
+<span class="rotated-header"><a href="../reference/bPET.mv.html">bPET.mv</a>/<a href="../reference/bPEESE.mv.html">bPEESE.mv</a></span>
+</th>
+<th class="model-head">
 <span class="rotated-header"><a href="../reference/BMA.html">BMA.norm</a></span>
+</th>
+<th class="model-head">
+<span class="rotated-header"><a href="../reference/BMA.mv.html">BMA.mv</a></span>
 </th>
 <th class="model-head">
 <span class="rotated-header"><a href="../reference/BMA.glmm.html">BMA.glmm</a></span>
@@ -412,15 +421,33 @@ Feature
 <th class="model-head">
 <span class="rotated-header"><a href="../reference/RoBMA.html">RoBMA</a></span>
 </th>
+<th class="model-head">
+<span class="rotated-header"><a href="../reference/RoBMA.mv.html">RoBMA.mv</a></span>
+</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="topic-cell" rowspan="9">
+<td class="topic-cell" rowspan="11">
 <span>Model / Structure</span>
 </td>
 <td class="feature-cell">
 Fixed- and random-effects models
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -469,6 +496,21 @@ Moderation (<code>mods</code>)
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
@@ -495,10 +537,31 @@ Location-scale models (<code>scale</code>)
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
-Multilevel models (<code>cluster</code>)
+Three-level models (<code>cluster</code>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -507,7 +570,19 @@ Multilevel models (<code>cluster</code>)
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -516,10 +591,48 @@ Multilevel models (<code>cluster</code>)
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="no">No</span>
+</td>
+</tr>
+<tr>
+<td class="feature-cell">
+Likelihood weights (<code>weights</code>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 </tr>
 <tr>
@@ -537,6 +650,21 @@ Model averaging
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -565,6 +693,21 @@ Inclusion Bayes factors
 <span class="no">No</span>
 </td>
 <td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
@@ -576,7 +719,13 @@ Inclusion Bayes factors
 </tr>
 <tr>
 <td class="feature-cell">
-General multivariate / covariance structures
+Multivariate models (<code>V</code>)
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -585,7 +734,19 @@ General multivariate / covariance structures
 <span class="no">No</span>
 </td>
 <td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -594,10 +755,48 @@ General multivariate / covariance structures
 <span class="no">No</span>
 </td>
 <td class="status-cell">
+<span class="yes">✓</span>
+</td>
+</tr>
+<tr>
+<td class="feature-cell">
+General random-effects models (<code>random</code>)
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 </tr>
 <tr>
@@ -625,10 +824,25 @@ Robust / sandwich inference
 <td class="status-cell">
 <span class="no">No</span>
 </td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
-Refit / update
+Extend MCMC sampling
 (<a href="../reference/update.brma.html"><code>update()</code></a>)
 </td>
 <td class="status-cell">
@@ -652,13 +866,43 @@ Refit / update
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
-<td class="topic-cell" rowspan="8">
+<td class="topic-cell" rowspan="4">
 <span>Priors</span>
 </td>
 <td class="feature-cell">
 Default prior distributions
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -708,133 +952,6 @@ Empirical/informed prior distributions
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
-</tr>
-<tr>
-<td class="feature-cell">
-Custom prior distributions
-(<a href="../reference/prior.html"><code>prior()</code></a>,
-<a href="../reference/prior_factor.html"><code>prior_factor()</code></a>,
-<a href="../reference/prior_weightfunction.html"><code>prior_weightfunction()</code></a>,
-<a href="../reference/prior_none.html"><code>prior_none()</code></a>)
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-</tr>
-<tr>
-<td class="feature-cell">
-PET / PEESE prior distributions
-(<a href="../reference/prior_PET.html"><code>prior_PET()</code></a>,
-<a href="../reference/prior_PEESE.html"><code>prior_PEESE()</code></a>)
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-</tr>
-<tr>
-<td class="feature-cell">
-Prior-only inspection (<code>only_priors = TRUE</code>)
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-</tr>
-<tr>
-<td class="feature-cell">
-Weight-function shape
-(<a href="../reference/prior_weightfunction.html"><code>wf_cumulative()</code></a>,
-<a href="../reference/prior_weightfunction.html"><code>wf_fixed()</code></a>,
-<a href="../reference/prior_weightfunction.html"><code>wf_independent()</code></a>)
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="no">No</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-</tr>
-<tr>
-<td class="feature-cell">
-Factor contrasts
-(<a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/contrast.html"><code>contr.treatment()</code></a>,
-<a href="../reference/contr.BayesTools.html"><code>contr.meandif()</code></a>,
-<a href="../reference/contr.BayesTools.html"><code>contr.orthonormal()</code></a>)
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
@@ -877,6 +994,65 @@ UISD estimation
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+</tr>
+<tr>
+<td class="feature-cell">
+Custom prior distributions
+(<a href="../reference/prior.html"><code>prior()</code></a>,
+<a href="../reference/prior_factor.html"><code>prior_factor()</code></a>,
+<a href="../reference/prior_ordered.html"><code>prior_ordered()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="topic-cell" rowspan="5">
@@ -884,12 +1060,22 @@ UISD estimation
 </td>
 <td class="feature-cell">
 Selection models
+(<a href="../reference/prior_weightfunction.html"><code>prior_weightfunction()</code></a>,
+<a href="../reference/prior_weightfunction.html"><code>wf_cumulative()</code></a>,
+<a href="../reference/prior_weightfunction.html"><code>wf_fixed()</code></a>,
+<a href="../reference/prior_weightfunction.html"><code>wf_independent()</code></a>)
 </td>
 <td class="status-cell">
 <span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -902,6 +1088,15 @@ Selection models
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -910,6 +1105,14 @@ Selection models
 <tr>
 <td class="feature-cell">
 PET / PEESE models
+(<a href="../reference/prior_PET.html"><code>prior_PET()</code></a>,
+<a href="../reference/prior_PEESE.html"><code>prior_PEESE()</code></a>)
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -924,10 +1127,19 @@ PET / PEESE models
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -956,6 +1168,21 @@ Model averaging over bias models
 <span class="no">No</span>
 </td>
 <td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 </tr>
@@ -970,6 +1197,15 @@ Bias-adjusted summaries / predictions
 <span class="no">No</span>
 </td>
 <td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
@@ -980,6 +1216,12 @@ Bias-adjusted summaries / predictions
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -988,6 +1230,21 @@ Bias-adjusted summaries / predictions
 <tr>
 <td class="feature-cell">
 Trim-fill / fail-safe N
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -1041,6 +1298,21 @@ Pooled effect / heterogeneity summaries
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
@@ -1052,7 +1324,7 @@ tau², I², H²)
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1061,19 +1333,49 @@ tau², I², H²)
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 </tr>
 <tr>
 <td class="feature-cell">
 Fitted-value extraction
 (<a href="../reference/fitted.brma.html"><code>fitted()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1123,11 +1425,41 @@ Prediction for new covariate values
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Posterior predictive response summaries
 (<a href="../reference/predict.brma.html"><code>predict()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1179,6 +1511,21 @@ True effects / BLUPs / random effects
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
@@ -1206,9 +1553,24 @@ Estimated marginal means
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
-<td class="topic-cell" rowspan="13">
+<td class="topic-cell" rowspan="14">
 <span>Plots</span>
 </td>
 <td class="feature-cell">
@@ -1236,11 +1598,41 @@ Posterior plots
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Prior plots
 (<a href="../reference/plot_prior.html"><code>plot_prior()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1291,11 +1683,41 @@ Marginal means plots
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Regression plots
 (<a href="../reference/regplot.html"><code>regplot()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1331,6 +1753,12 @@ Funnel plots
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
@@ -1338,6 +1766,57 @@ Funnel plots
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+</tr>
+<tr>
+<td class="feature-cell">
+Bayesian funnel plots
+(<a href="../reference/funnel.html"><code>bfunnel()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1349,7 +1828,16 @@ Funnel plots
 <tr>
 <td class="feature-cell">
 zplot diagnostics
-(<a href="../reference/as_zplot.brma.html"><code>as_zplot()</code></a>/<code>zplot()</code>)
+(<a href="../reference/as_zplot.brma.html"><code>as_zplot()</code></a>/<a href="../reference/zplot.brma.html"><code>zplot()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1365,6 +1853,12 @@ zplot diagnostics
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1385,6 +1879,12 @@ Weight-function plots
 <span class="no">No</span>
 </td>
 <td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
@@ -1395,6 +1895,15 @@ Weight-function plots
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1415,6 +1924,15 @@ PET-PEESE plots
 <span class="no">No</span>
 </td>
 <td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
@@ -1422,6 +1940,12 @@ PET-PEESE plots
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1437,19 +1961,34 @@ Radial / Galbraith plots
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="limited">limited</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
-<span class="yes">✓</span>
-</td>
-<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1458,34 +1997,65 @@ Radial / Galbraith plots
 <tr>
 <td class="feature-cell">
 Forest plots
-(<a href="https://wviechtb.github.io/metafor/reference/forest.rma.html"><code>forest()</code></a>)
+(<a href="../reference/forest.html"><code>metafor::forest()</code></a>,
+<a href="../reference/as_metafor_forest.html"><code>as_metafor_forest()</code></a>)
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 </tr>
 <tr>
 <td class="feature-cell">
 Baujat plots
 (<a href="https://wviechtb.github.io/metafor/reference/baujat.html"><code>baujat()</code></a>)
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -1535,11 +2105,41 @@ GOSH plots
 <td class="status-cell">
 <span class="no">No</span>
 </td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 L’Abbe plots
 (<a href="https://wviechtb.github.io/metafor/reference/labbe.html"><code>labbe()</code></a>)
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -1592,6 +2192,21 @@ Raw residuals
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
@@ -1602,6 +2217,12 @@ Pearson / standardized residuals
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
 <span class="no">No</span>
 </td>
 <td class="status-cell">
@@ -1614,7 +2235,16 @@ Pearson / standardized residuals
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="limited">limited</span>
@@ -1632,6 +2262,12 @@ Studentized residuals (LOO-PIT)
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
@@ -1639,6 +2275,15 @@ Studentized residuals (LOO-PIT)
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1659,6 +2304,12 @@ Q-Q plots
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
@@ -1666,6 +2317,15 @@ Q-Q plots
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1683,6 +2343,12 @@ Cook’s distances
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
 <span class="no">No</span>
 </td>
 <td class="status-cell">
@@ -1695,16 +2361,40 @@ Cook’s distances
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 </tr>
 <tr>
 <td class="feature-cell">
 DFBETAS
 (<a href="../reference/dfbetas.brma.html"><code>dfbetas()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1737,6 +2427,12 @@ DFFITS
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
 <span class="no">No</span>
 </td>
 <td class="status-cell">
@@ -1749,16 +2445,40 @@ DFFITS
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 </tr>
 <tr>
 <td class="feature-cell">
 Covariance ratios
 (<a href="../reference/covratio.brma.html"><code>covratio()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -1791,6 +2511,12 @@ Hat values
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
 <span class="no">No</span>
 </td>
 <td class="status-cell">
@@ -1803,10 +2529,19 @@ Hat values
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="no">No</span>
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 </tr>
 <tr>
@@ -1824,10 +2559,25 @@ Combined influence summary
 <span class="limited">limited</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="limited">limited</span>
@@ -1840,6 +2590,7 @@ Combined influence summary
 <td class="feature-cell">
 LOO / WAIC diagnostics
 (<a href="../reference/check_loo.brma.html"><code>check_loo()</code></a>,
+<a href="../reference/loo_weights.brma.html"><code>loo_weights()</code></a>,
 <a href="https://mc-stan.org/loo/reference/pareto-k-diagnostic.html"><code>loo::pareto_k_ids()</code></a>,
 <a href="https://mc-stan.org/loo/reference/pareto-k-diagnostic.html"><code>loo::pareto_k_table()</code></a>)
 </td>
@@ -1847,22 +2598,37 @@ LOO / WAIC diagnostics
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 </tr>
 <tr>
@@ -1891,10 +2657,40 @@ Moderator collinearity diagnostics
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Refit leave-one-out / permutation tests
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -1947,11 +2743,41 @@ Posterior summaries (Rhat, ESS, MCMC error)
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Trace plots
 (<a href="../reference/plot_diagnostic.html"><code>plot_diagnostic_trace()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -2001,11 +2827,41 @@ Density plots
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Autocorrelation plots
 (<a href="../reference/plot_diagnostic.html"><code>plot_diagnostic_autocorrelation()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -2055,9 +2911,24 @@ Diagnostic-plot wrapper
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
-<td class="topic-cell" rowspan="6">
+<td class="topic-cell" rowspan="7">
 <span>Model Comparison</span>
 </td>
 <td class="feature-cell">
@@ -2076,6 +2947,21 @@ Marginal likelihood
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -2099,22 +2985,37 @@ WAIC/LOO
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 </tr>
 <tr>
@@ -2145,40 +3046,126 @@ Bayes factors
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 WAIC comparison
-(<a href="../reference/loo_compare.brma.html"><code>loo_compare()</code></a>,
-<a href="../reference/loo_weights.brma.html"><code>loo_weights()</code></a>)
+(<a href="../reference/loo_compare.brma.html"><code>loo_compare()</code></a>)
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 </tr>
 <tr>
 <td class="feature-cell">
 LOO comparison
 (<a href="../reference/loo_compare.brma.html"><code>loo_compare()</code></a>,
-<a href="../reference/loo_weights.brma.html"><code>loo_weights()</code></a>)
+<a href="../reference/loo_model_weights.brma.html"><code>loo_model_weights()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+</tr>
+<tr>
+<td class="feature-cell">
+Parameter hypothesis tests
+(<a href="../reference/hypothesis.html"><code>hypothesis()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -2205,6 +3192,21 @@ LOO comparison
 <tr>
 <td class="feature-cell">
 AIC / BIC
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -2257,6 +3259,21 @@ Plain-text interpretation
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
@@ -2276,6 +3293,21 @@ Sub-model summary
 <span class="no">No</span>
 </td>
 <td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
@@ -2289,6 +3321,21 @@ Sub-model summary
 <td class="feature-cell">
 Prior inspection
 (<a href="../reference/print_prior.html"><code>print_prior()</code></a>)
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
@@ -2346,6 +3393,21 @@ Posterior draw extraction
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
@@ -2373,32 +3435,63 @@ Coefficients
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Point-wise log-likelihood
-(<a href="../reference/logLik.brma.html"><code>logLik()</code></a>)
+(<a href="../reference/log_lik.html"><code>log_lik()</code></a>,
+<a href="../reference/logLik.brma.html"><code>logLik()</code></a>)
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
 <td class="status-cell">
-<span class="yes">✓</span>
+<span class="limited">limited</span>
 </td>
 <td class="status-cell">
 <span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="limited">limited</span>
 </td>
 </tr>
 <tr>
@@ -2427,11 +3520,41 @@ Sample size
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Variance-covariance matrix
 (<a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/vcov.html"><code>vcov()</code></a>)
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -2484,11 +3607,41 @@ Credible intervals
 <td class="status-cell">
 <span class="yes">✓</span>
 </td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
+<td class="status-cell">
+<span class="yes">✓</span>
+</td>
 </tr>
 <tr>
 <td class="feature-cell">
 Model weights
 (<a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/weights.html"><code>weights()</code></a>)
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
 </td>
 <td class="status-cell">
 <span class="no">No</span>
@@ -2538,6 +3691,21 @@ Simulated responses
 <td class="status-cell">
 <span class="no">No</span>
 </td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
+<td class="status-cell">
+<span class="no">No</span>
+</td>
 </tr>
 </tbody>
 </table>
@@ -2549,11 +3717,6 @@ Simulated responses
 Bartoš, F., &amp; Maier, M. (2020). <em><span>RoBMA</span>:
 <span>A</span>n <span>R</span> package for robust <span>B</span>ayesian
 meta-analyses</em>. <a href="https://CRAN.R-project.org/package=RoBMA">https://CRAN.R-project.org/package=RoBMA</a>
-</div>
-<div id="ref-metafor" class="csl-entry">
-Viechtbauer, W. (2010). Conducting meta-analyses in <span>R</span> with
-the <span class="nocase">metafor</span> package. <em>Journal of
-Statistical Software</em>, <em>36</em>(3), 1–48. <a href="https://doi.org/10.18637/jss.v036.i03">https://doi.org/10.18637/jss.v036.i03</a>
 </div>
 </div>
 </div>

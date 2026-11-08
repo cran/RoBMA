@@ -1,5 +1,5 @@
 The `RoBMA` R package fits a comprehensive collection of Bayesian meta-analytic models [@RoBMA].
-It provides single-model fits, meta-regression, location-scale models, multilevel models, fully Bayesian model-averaged ensembles, and built-in publication-bias adjustment using selection models, PET-PEESE, and Robust Bayesian Meta-Analysis (RoBMA).
+It provides single-model fits, meta-regression, location-scale models, multilevel and multivariate models, fully Bayesian model-averaged ensembles, and built-in publication-bias adjustment using selection models, PET-PEESE, and Robust Bayesian Meta-Analysis (RoBMA).
 Posterior sampling is performed by JAGS through a custom C++ module that implements the weighted distributions used in selection models.
 Prior handling, plotting, and Bayesian diagnostics are delegated to the companion `BayesTools` package.
 
@@ -7,7 +7,7 @@ This introduction maps the package at a high level and points to the more detail
 
 ## System Requirements
 
-The `RoBMA` R package requires JAGS 4.3.1 or newer [@plummer2003jags].
+The `RoBMA` R package requires JAGS 4.x (4.3.1 or newer; JAGS 5 is not supported) [@plummer2003jags].
 Install JAGS from <https://mcmc-jags.sourceforge.io/> before installing the R package.
 
 ```r
@@ -30,25 +30,26 @@ The package exposes a small set of high-level fitting functions.
 
 | Function              | What it fits                                                               |
 |:----------------------|:---------------------------------------------------------------------------|
-| [`brma()`](`r reference_url("brma")`), [`brma.norm()`](`r reference_url("brma")`) | Bayesian random-effects meta-analysis                                      |
+| [`brma()`](`r reference_url("brma")`), [`brma.norm()`](`r reference_url("brma")`), [`brma.mv()`](`r reference_url("brma.mv")`) | Bayesian random-effects meta-analysis                                      |
 | [`brma.glmm()`](`r reference_url("brma.glmm")`) | Bayesian GLMM meta-analysis (binomial / log OR or Poisson / log IRR)       |
-| [`bselmodel()`](`r reference_url("bselmodel")`) | Bayesian weight-function selection model                                   |
-| [`bPET()`](`r reference_url("bPET")`), [`bPEESE()`](`r reference_url("bPEESE")`) | Bayesian PET / PEESE publication-bias adjustment                           |
-| [`BMA()`](`r reference_url("BMA")`), [`BMA.norm()`](`r reference_url("BMA")`) | Bayesian model-averaging across presence / absence of effect and heterogeneity (no bias adjustment) |
+| [`bselmodel()`](`r reference_url("bselmodel")`), [`bselmodel.mv()`](`r reference_url("bselmodel.mv")`) | Bayesian weight-function selection model                                   |
+| [`bPET()`](`r reference_url("bPET")`), [`bPEESE()`](`r reference_url("bPEESE")`), [`bPET.mv()`](`r reference_url("bPET.mv")`), [`bPEESE.mv()`](`r reference_url("bPEESE.mv")`) | Bayesian PET / PEESE publication-bias adjustment                           |
+| [`BMA()`](`r reference_url("BMA")`), [`BMA.norm()`](`r reference_url("BMA")`), [`BMA.mv()`](`r reference_url("BMA.mv")`) | Bayesian model-averaging across presence / absence of effect and heterogeneity (no bias adjustment) |
 | [`BMA.glmm()`](`r reference_url("BMA.glmm")`) | Bayesian model-averaging for GLMM meta-analysis                            |
-| [`RoBMA()`](`r reference_url("RoBMA")`) | Robust Bayesian model-averaging including publication-bias models          |
+| [`RoBMA()`](`r reference_url("RoBMA")`), [`RoBMA.mv()`](`r reference_url("RoBMA.mv")`) | Robust Bayesian model-averaging including publication-bias models          |
 
 `brma()` and `RoBMA()` are the main workhorses.
 `brma()` fits a single model in the same spirit as `metafor::rma()`; `RoBMA()` averages across an ensemble that includes publication-bias adjustment.
 `BMA()` is `RoBMA()` without the bias-adjustment models.
+The `.mv` variants extend these models to multivariate and multilevel data with a known sampling covariance matrix (`V`) and random-effect formulas (`random`, e.g., `~ 1 | study / esid`), in the same spirit as `metafor::rma.mv()`.
 
 All fitting functions
 
-- share an effect-size interface (`yi`, `sei` / `vi`, `measure` arguments; apart from glmm),
+- share an effect-size interface (`yi`, `sei` / `vi`, `measure` arguments; the `.mv` variants also accept `V`, and the `.glmm` variants take outcome counts),
 - can be extended into a meta-regression (`mods` argument),
 - can be extended into a location-scale model (`scale` argument),
-- can be extended into a multilevel model (`cluster` argument),
-- and all produce objects that work with the same set of inference helpers (`summary()`, `plot()`, `predict()`, `loo()`, `funnel()`, `regplot()`, residuals and influence diagnostics, ...).
+- can be extended into a multilevel model (`cluster` argument; `random` in the `.mv` variants),
+- and produce objects that work with the same set of inference helpers (`summary()`, `plot()`, `predict()`, `loo()`, `funnel()`, `regplot()`, residuals and influence diagnostics, ...); see [*Feature Coverage*](`r article_url("v03-feature-coverage")`) for the exceptions.
 
 ## Vignette Map
 
@@ -74,6 +75,7 @@ The [*Bayesian Meta-Analysis*](`r article_url("v02-bayesian-meta-analysis")`) vi
 | [*Publication-Bias Adjustment*](`r article_url("v11-metafor-parity-publication-bias")`) | `bselmodel()` / `bPET()` / `bPEESE()` and `metafor::selmodel()` |
 | [*Location-Scale Models*](`r article_url("v12-metafor-parity-location-scale")`) | `brma()` with `scale` and `metafor::rma.ls()`          |
 | [*Generalized Linear Mixed-Effects Meta-Analysis*](`r article_url("v13-metafor-parity-glmm")`) | `brma.glmm()` and `metafor::rma.glmm()` for binomial and Poisson outcomes |
+| [*Multivariate and Multilevel Meta-Analysis*](`r article_url("v14-metafor-parity-multivariate")`) | `brma.mv()` with known sampling covariance matrices and structured random effects |
 
 Each vignette starts from a `metafor` package analysis and shows the matching `RoBMA` R package syntax, output, and diagnostics.
 
@@ -83,6 +85,7 @@ Each vignette starts from a `metafor` package analysis and shows the matching `R
 |:-------------------------------|:-----------------------------------------------------------------------|
 | [*Bayesian Model Averaging*](`r article_url("v20-bayesian-model-averaging")`) | Accounting for model uncertainty across presence and absence of effect and heterogeneity, with posterior model probabilities and inclusion Bayes factors |
 | [*Robust Bayesian Meta-Analysis*](`r article_url("v21-robust-bayesian-meta-analysis")`) | Extending the ensemble to publication-bias models used in `RoBMA()`, with `PSMA`, `PP`, and bespoke ensemble specifications |
+| [*Posterior Densities and Parameter Tests*](`r article_url("v22-posterior-densities-parameter-tests")`) | Likelihood-aware posterior densities and hypothesis tests with qCMDE and IWMDE |
 
 The first vignette introduces model averaging on an ensemble of models with and without effect and heterogeneity.
 The second extends the ensemble to publication-bias models used in `RoBMA()`.

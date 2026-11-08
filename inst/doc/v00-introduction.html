@@ -363,7 +363,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to RoBMA</h1>
 <h4 class="author">František Bartoš</h4>
-<h4 class="date">28th of April 2026</h4>
+<h4 class="date">28th of April 2026 (updated 22nd of June 2026)</h4>
 
 
 
@@ -387,19 +387,20 @@ overflow-x: auto !important;
 <p>The <code>RoBMA</code> R package fits a comprehensive collection of
 Bayesian meta-analytic models <span class="citation">(<a href="#ref-RoBMA">Bartoš &amp; Maier, 2020</a>)</span>. It provides
 single-model fits, meta-regression, location-scale models, multilevel
-models, fully Bayesian model-averaged ensembles, and built-in
-publication-bias adjustment using selection models, PET-PEESE, and
-Robust Bayesian Meta-Analysis (RoBMA). Posterior sampling is performed
-by JAGS through a custom C++ module that implements the weighted
-distributions used in selection models. Prior handling, plotting, and
-Bayesian diagnostics are delegated to the companion
+and multivariate models, fully Bayesian model-averaged ensembles, and
+built-in publication-bias adjustment using selection models, PET-PEESE,
+and Robust Bayesian Meta-Analysis (RoBMA). Posterior sampling is
+performed by JAGS through a custom C++ module that implements the
+weighted distributions used in selection models. Prior handling,
+plotting, and Bayesian diagnostics are delegated to the companion
 <code>BayesTools</code> package.</p>
 <p>This introduction maps the package at a high level and points to the
 more detailed vignettes that follow.</p>
 <div id="system-requirements" class="section level2">
 <h2>System Requirements</h2>
-<p>The <code>RoBMA</code> R package requires JAGS 4.3.1 or newer <span class="citation">(<a href="#ref-plummer2003jags">Plummer,
-2003</a>)</span>. Install JAGS from <a href="https://mcmc-jags.sourceforge.io/" class="uri">https://mcmc-jags.sourceforge.io/</a> before installing the
+<p>The <code>RoBMA</code> R package requires JAGS 4.x (4.3.1 or newer;
+JAGS 5 is not supported) <span class="citation">(<a href="#ref-plummer2003jags">Plummer, 2003</a>)</span>. Install JAGS from
+<a href="https://mcmc-jags.sourceforge.io/" class="uri">https://mcmc-jags.sourceforge.io/</a> before installing the
 R package.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;RoBMA&quot;</span>)</span></code></pre></div>
 <p><strong>Note on backwards compatibility.</strong> The 4.0 release is
@@ -430,7 +431,7 @@ version 3.6.1 together with <code>BayesTools</code> version 0.2.23:</p>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left"><a href="../reference/brma.html"><code>brma()</code></a>, <a href="../reference/brma.html"><code>brma.norm()</code></a></td>
+<td align="left"><a href="../reference/brma.html"><code>brma()</code></a>, <a href="../reference/brma.html"><code>brma.norm()</code></a>, <a href="../reference/brma.mv.html"><code>brma.mv()</code></a></td>
 <td align="left">Bayesian random-effects meta-analysis</td>
 </tr>
 <tr class="even">
@@ -439,16 +440,16 @@ version 3.6.1 together with <code>BayesTools</code> version 0.2.23:</p>
 Poisson / log IRR)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="../reference/bselmodel.html"><code>bselmodel()</code></a></td>
+<td align="left"><a href="../reference/bselmodel.html"><code>bselmodel()</code></a>, <a href="../reference/bselmodel.mv.html"><code>bselmodel.mv()</code></a></td>
 <td align="left">Bayesian weight-function selection model</td>
 </tr>
 <tr class="even">
-<td align="left"><a href="../reference/bPET.html"><code>bPET()</code></a>, <a href="../reference/bPEESE.html"><code>bPEESE()</code></a></td>
+<td align="left"><a href="../reference/bPET.html"><code>bPET()</code></a>, <a href="../reference/bPEESE.html"><code>bPEESE()</code></a>, <a href="../reference/bPET.mv.html"><code>bPET.mv()</code></a>, <a href="../reference/bPEESE.mv.html"><code>bPEESE.mv()</code></a></td>
 <td align="left">Bayesian PET / PEESE publication-bias adjustment</td>
 </tr>
 <tr class="odd">
 <td align="left"><a href="../reference/BMA.html"><code>BMA()</code></a>,
-<a href="../reference/BMA.html"><code>BMA.norm()</code></a></td>
+<a href="../reference/BMA.html"><code>BMA.norm()</code></a>, <a href="../reference/BMA.mv.html"><code>BMA.mv()</code></a></td>
 <td align="left">Bayesian model-averaging across presence / absence of
 effect and heterogeneity (no bias adjustment)</td>
 </tr>
@@ -457,7 +458,7 @@ effect and heterogeneity (no bias adjustment)</td>
 <td align="left">Bayesian model-averaging for GLMM meta-analysis</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="../reference/RoBMA.html"><code>RoBMA()</code></a></td>
+<td align="left"><a href="../reference/RoBMA.html"><code>RoBMA()</code></a>, <a href="../reference/RoBMA.mv.html"><code>RoBMA.mv()</code></a></td>
 <td align="left">Robust Bayesian model-averaging including
 publication-bias models</td>
 </tr>
@@ -467,21 +468,29 @@ publication-bias models</td>
 <code>brma()</code> fits a single model in the same spirit as
 <code>metafor::rma()</code>; <code>RoBMA()</code> averages across an
 ensemble that includes publication-bias adjustment. <code>BMA()</code>
-is <code>RoBMA()</code> without the bias-adjustment models.</p>
+is <code>RoBMA()</code> without the bias-adjustment models. The
+<code>.mv</code> variants extend these models to multivariate and
+multilevel data with a known sampling covariance matrix (<code>V</code>)
+and random-effect formulas (<code>random</code>, e.g.,
+<code>~ 1 | study / esid</code>), in the same spirit as
+<code>metafor::rma.mv()</code>.</p>
 <p>All fitting functions</p>
 <ul>
 <li>share an effect-size interface (<code>yi</code>, <code>sei</code> /
-<code>vi</code>, <code>measure</code> arguments; apart from glmm),</li>
+<code>vi</code>, <code>measure</code> arguments; the <code>.mv</code>
+variants also accept <code>V</code>, and the <code>.glmm</code> variants
+take outcome counts),</li>
 <li>can be extended into a meta-regression (<code>mods</code>
 argument),</li>
 <li>can be extended into a location-scale model (<code>scale</code>
 argument),</li>
 <li>can be extended into a multilevel model (<code>cluster</code>
-argument),</li>
-<li>and all produce objects that work with the same set of inference
-helpers (<code>summary()</code>, <code>plot()</code>,
-<code>predict()</code>, <code>loo()</code>, <code>funnel()</code>,
-<code>regplot()</code>, residuals and influence diagnostics, …).</li>
+argument; <code>random</code> in the <code>.mv</code> variants),</li>
+<li>and produce objects that work with the same set of inference helpers
+(<code>summary()</code>, <code>plot()</code>, <code>predict()</code>,
+<code>loo()</code>, <code>funnel()</code>, <code>regplot()</code>,
+residuals and influence diagnostics, …); see <a href="v03-feature-coverage.html"><em>Feature Coverage</em></a> for the
+exceptions.</li>
 </ul>
 </div>
 <div id="vignette-map" class="section level2">
@@ -573,6 +582,12 @@ Linear Mixed-Effects Meta-Analysis</em></a></td>
 <td align="left"><code>brma.glmm()</code> and
 <code>metafor::rma.glmm()</code> for binomial and Poisson outcomes</td>
 </tr>
+<tr class="odd">
+<td align="left"><a href="v14-metafor-parity-multivariate.html"><em>Multivariate and
+Multilevel Meta-Analysis</em></a></td>
+<td align="left"><code>brma.mv()</code> with known sampling covariance
+matrices and structured random effects</td>
+</tr>
 </tbody>
 </table>
 <p>Each vignette starts from a <code>metafor</code> package analysis and
@@ -606,6 +621,12 @@ Meta-Analysis</em></a></td>
 <td align="left">Extending the ensemble to publication-bias models used
 in <code>RoBMA()</code>, with <code>PSMA</code>, <code>PP</code>, and
 bespoke ensemble specifications</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="v22-posterior-densities-parameter-tests.html"><em>Posterior
+Densities and Parameter Tests</em></a></td>
+<td align="left">Likelihood-aware posterior densities and hypothesis
+tests with qCMDE and IWMDE</td>
 </tr>
 </tbody>
 </table>
